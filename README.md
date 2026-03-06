@@ -90,6 +90,18 @@ npm install && npm run build
 }
 ```
 
+## Fork Maintenance Workflow
+
+If you run this project as a fork (recommended when you need EasyPanel-version-specific compatibility), use:
+
+- [FORK_WORKFLOW.md](./FORK_WORKFLOW.md)
+
+It documents:
+- how to keep `origin` (your fork) and `upstream` (original repo),
+- how to merge upstream safely without losing local patches,
+- how to keep deployable stability on `main`,
+- and how to deploy the fork source in EasyPanel.
+
 ## 🔧 Available Tools (40)
 
 ### Projects
