@@ -2,7 +2,7 @@
 
 This repository is maintained as a fork of:
 - Upstream: `dray-supadev/easypanel-mcp`
-- Fork: `<your-github-user>/easypanel-mcp`
+- Fork: `<your-user>/easypanel-mcp`
 
 Use this workflow to keep upstream improvements while preserving local customizations for your EasyPanel version.
 
@@ -12,14 +12,14 @@ Expected remotes:
 
 ```bash
 git remote -v
-# origin   https://github.com/<your-github-user>/easypanel-mcp.git (fetch/push)
+# origin   https://github.com/<your-user>/easypanel-mcp.git (fetch/push)
 # upstream https://github.com/dray-supadev/easypanel-mcp.git (fetch/push)
 ```
 
 If needed:
 
 ```bash
-git remote set-url origin https://github.com/<your-github-user>/easypanel-mcp.git
+git remote set-url origin https://github.com/<your-user>/easypanel-mcp.git
 git remote add upstream https://github.com/dray-supadev/easypanel-mcp.git
 ```
 
@@ -80,7 +80,7 @@ Current fork assumption:
 
 ## Mandatory Post-Upgrade Workflow
 
-After updating EasyPanel on the deployed host, do not redeploy this MCP blindly.
+After updating the deployed EasyPanel instance, do not redeploy this MCP blindly.
 
 Run this sequence first:
 
@@ -103,10 +103,10 @@ Only after that should `main` be pushed and redeployed in EasyPanel.
 
 ## Runtime Expectations
 
-- Deploy from the fork: `<your-github-user>/easypanel-mcp`
+- Deploy from the fork: `<your-user>/easypanel-mcp`
 - Branch: `main`
 - Preferred profile: `MCP_PROFILE=progressive`
-- Preferred EasyPanel URL inside the container: `http://your-easypanel-host:3000`
+- Preferred EasyPanel URL: an internal service URL reachable from the MCP container
 - Prefer internal networking over published host ports
 
 This prevents two common failures:

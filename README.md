@@ -40,7 +40,7 @@ The response contains `"token":"xxx"` — that's your API token.
    PORT=3000
    ```
    
-   > **Important:** Use `http://your-easypanel-host:3000` (internal Docker network) when deploying on the same EasyPanel instance. External URLs won't work from inside the container.
+   > **Important:** Use an EasyPanel URL that is reachable from the MCP container. When both services run on the same instance, prefer an internal service URL over a public host port.
    
    > **`MCP_PROFILE`**: `direct` exposes all MCP tools directly. `progressive` exposes only `ep_discover`, `ep_capability_schema`, `ep_execute_read`, and `ep_execute_write_guarded`.
    

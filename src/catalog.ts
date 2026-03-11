@@ -447,7 +447,7 @@ directToolSpecs.push(
       keywords: ["service", "notes", "metadata", "annotation"],
       safetyClass: "safe",
       summary: "Read notes attached to a service.",
-      example: { projectName: "sample-project", serviceName: "easypanel-mcp" },
+      example: { projectName: "sample-project", serviceName: "sample-service" },
     },
   ),
   tool(
@@ -464,7 +464,7 @@ directToolSpecs.push(
       keywords: ["service", "notes", "metadata", "annotation", "update"],
       safetyClass: "guarded",
       summary: "Set notes attached to a service.",
-      example: { projectName: "sample-project", serviceName: "easypanel-mcp", notes: "Managed by MCP" },
+      example: { projectName: "sample-project", serviceName: "sample-service", notes: "Managed by MCP" },
     },
   ),
   tool(
@@ -478,7 +478,7 @@ directToolSpecs.push(
       keywords: ["service", "error", "failure", "debug", "diagnostics"],
       safetyClass: "safe",
       summary: "Read the latest EasyPanel error for a service.",
-      example: { projectName: "sample-project", serviceName: "easypanel-mcp" },
+      example: { projectName: "sample-project", serviceName: "sample-service" },
     },
   ),
   tool(
@@ -499,9 +499,9 @@ directToolSpecs.push(
       summary: "Rename a service or move it to another project.",
       example: {
         oldProjectName: "sample-project",
-        oldServiceName: "easypanel-mcp",
+        oldServiceName: "sample-service",
         newProjectName: "target-project",
-        newServiceName: "easypanel-mcp",
+        newServiceName: "renamed-service",
       },
     },
   ),
@@ -516,7 +516,7 @@ directToolSpecs.push(
       keywords: ["app", "service", "create", "deployable", "web"],
       safetyClass: "guarded",
       summary: "Create an app service.",
-      example: { projectName: "sample-project", serviceName: "hello-app" },
+      example: { projectName: "sample-project", serviceName: "web-app" },
     },
   ),
   tool(
@@ -530,7 +530,7 @@ directToolSpecs.push(
       keywords: ["app", "service", "inspect", "env", "domains", "source"],
       safetyClass: "safe",
       summary: "Inspect an app service.",
-      example: { projectName: "sample-project", serviceName: "hello-app" },
+      example: { projectName: "sample-project", serviceName: "web-app" },
     },
   ),
   tool(
@@ -544,7 +544,7 @@ directToolSpecs.push(
       keywords: ["app", "deploy", "build", "release"],
       safetyClass: "guarded",
       summary: "Deploy an app service.",
-      example: { projectName: "sample-project", serviceName: "hello-app" },
+      example: { projectName: "sample-project", serviceName: "web-app" },
     },
   ),
   tool(
@@ -558,7 +558,7 @@ directToolSpecs.push(
       keywords: ["app", "start", "service", "run"],
       safetyClass: "guarded",
       summary: "Start an app service.",
-      example: { projectName: "sample-project", serviceName: "hello-app" },
+      example: { projectName: "sample-project", serviceName: "web-app" },
     },
   ),
   tool(
@@ -572,7 +572,7 @@ directToolSpecs.push(
       keywords: ["app", "stop", "service", "halt"],
       safetyClass: "guarded",
       summary: "Stop an app service.",
-      example: { projectName: "sample-project", serviceName: "hello-app" },
+      example: { projectName: "sample-project", serviceName: "web-app" },
     },
   ),
   tool(
@@ -586,7 +586,7 @@ directToolSpecs.push(
       keywords: ["app", "restart", "service", "reload"],
       safetyClass: "guarded",
       summary: "Restart an app service.",
-      example: { projectName: "sample-project", serviceName: "hello-app" },
+      example: { projectName: "sample-project", serviceName: "web-app" },
     },
   ),
   tool(
@@ -600,7 +600,7 @@ directToolSpecs.push(
       keywords: ["app", "delete", "destroy", "remove"],
       safetyClass: "dangerous",
       summary: "Delete an app service.",
-      example: { projectName: "sample-project", serviceName: "hello-app" },
+      example: { projectName: "sample-project", serviceName: "web-app" },
     },
   ),
   tool(
@@ -617,7 +617,7 @@ directToolSpecs.push(
       keywords: ["app", "image", "docker", "source"],
       safetyClass: "guarded",
       summary: "Set an app source to a Docker image.",
-      example: { projectName: "sample-project", serviceName: "hello-app", image: "nginx:latest" },
+      example: { projectName: "sample-project", serviceName: "web-app", image: "nginx:latest" },
     },
   ),
   tool(
@@ -637,7 +637,7 @@ directToolSpecs.push(
       keywords: ["app", "github", "git", "source", "repo"],
       safetyClass: "guarded",
       summary: "Set an app source to a GitHub repository.",
-      example: { projectName: "sample-project", serviceName: "hello-app", owner: "dray-supadev", repo: "easypanel-mcp" },
+      example: { projectName: "sample-project", serviceName: "web-app", owner: "example-user", repo: "example-repo" },
     },
   ),
   tool(
@@ -654,7 +654,7 @@ directToolSpecs.push(
       keywords: ["app", "env", "environment", "variables", "config"],
       safetyClass: "guarded",
       summary: "Update app environment variables.",
-      example: { projectName: "sample-project", serviceName: "hello-app", env: "NODE_ENV=production" },
+      example: { projectName: "sample-project", serviceName: "web-app", env: "NODE_ENV=production" },
     },
   ),
   tool(
@@ -674,7 +674,7 @@ directToolSpecs.push(
       keywords: ["app", "resources", "cpu", "memory", "limits"],
       safetyClass: "guarded",
       summary: "Set CPU and memory limits for an app.",
-      example: { projectName: "sample-project", serviceName: "hello-app", memoryLimit: 512, cpuLimit: 1 },
+      example: { projectName: "sample-project", serviceName: "web-app", memoryLimit: 512, cpuLimit: 1 },
     },
   ),
   tool(
@@ -688,7 +688,7 @@ directToolSpecs.push(
       keywords: ["box", "devbox", "workspace", "ide", "create"],
       safetyClass: "guarded",
       summary: "Create a Box development service.",
-      example: { projectName: "sample-project", serviceName: "devbox" },
+      example: { projectName: "sample-project", serviceName: "dev-box" },
     },
   ),
   tool(
@@ -702,7 +702,7 @@ directToolSpecs.push(
       keywords: ["box", "devbox", "workspace", "inspect", "ide"],
       safetyClass: "safe",
       summary: "Inspect a Box development service.",
-      example: { projectName: "sample-project", serviceName: "devbox" },
+      example: { projectName: "sample-project", serviceName: "dev-box" },
     },
   ),
   tool(
@@ -716,7 +716,7 @@ directToolSpecs.push(
       keywords: ["box", "devbox", "workspace", "start"],
       safetyClass: "guarded",
       summary: "Start a Box development service.",
-      example: { projectName: "sample-project", serviceName: "devbox" },
+      example: { projectName: "sample-project", serviceName: "dev-box" },
     },
   ),
   tool(
@@ -730,7 +730,7 @@ directToolSpecs.push(
       keywords: ["box", "devbox", "workspace", "stop"],
       safetyClass: "guarded",
       summary: "Stop a Box development service.",
-      example: { projectName: "sample-project", serviceName: "devbox" },
+      example: { projectName: "sample-project", serviceName: "dev-box" },
     },
   ),
   tool(
@@ -744,7 +744,7 @@ directToolSpecs.push(
       keywords: ["box", "devbox", "workspace", "restart"],
       safetyClass: "guarded",
       summary: "Restart a Box development service.",
-      example: { projectName: "sample-project", serviceName: "devbox" },
+      example: { projectName: "sample-project", serviceName: "dev-box" },
     },
   ),
   tool(
@@ -758,7 +758,7 @@ directToolSpecs.push(
       keywords: ["box", "devbox", "workspace", "delete", "destroy", "remove"],
       safetyClass: "dangerous",
       summary: "Delete a Box development service.",
-      example: { projectName: "sample-project", serviceName: "devbox" },
+      example: { projectName: "sample-project", serviceName: "dev-box" },
     },
   ),
 );
@@ -817,7 +817,7 @@ directToolSpecs.push(
       keywords: ["wordpress", "wp", "blog", "cms", "create"],
       safetyClass: "guarded",
       summary: "Create a WordPress service.",
-      example: { projectName: "sample-project", serviceName: "wp-blog" },
+      example: { projectName: "sample-project", serviceName: "blog-site" },
     },
   ),
   tool(
@@ -831,7 +831,7 @@ directToolSpecs.push(
       keywords: ["wordpress", "wp", "blog", "cms", "inspect"],
       safetyClass: "safe",
       summary: "Inspect a WordPress service.",
-      example: { projectName: "sample-project", serviceName: "wp-blog" },
+      example: { projectName: "sample-project", serviceName: "blog-site" },
     },
   ),
   tool(
@@ -845,7 +845,7 @@ directToolSpecs.push(
       keywords: ["wordpress", "wp", "blog", "cms", "start"],
       safetyClass: "guarded",
       summary: "Start a WordPress service.",
-      example: { projectName: "sample-project", serviceName: "wp-blog" },
+      example: { projectName: "sample-project", serviceName: "blog-site" },
     },
   ),
   tool(
@@ -859,7 +859,7 @@ directToolSpecs.push(
       keywords: ["wordpress", "wp", "blog", "cms", "stop"],
       safetyClass: "guarded",
       summary: "Stop a WordPress service.",
-      example: { projectName: "sample-project", serviceName: "wp-blog" },
+      example: { projectName: "sample-project", serviceName: "blog-site" },
     },
   ),
   tool(
@@ -873,7 +873,7 @@ directToolSpecs.push(
       keywords: ["wordpress", "wp", "blog", "cms", "restart"],
       safetyClass: "guarded",
       summary: "Restart a WordPress service.",
-      example: { projectName: "sample-project", serviceName: "wp-blog" },
+      example: { projectName: "sample-project", serviceName: "blog-site" },
     },
   ),
   tool(
@@ -887,7 +887,7 @@ directToolSpecs.push(
       keywords: ["wordpress", "wp", "blog", "cms", "delete", "destroy", "remove"],
       safetyClass: "dangerous",
       summary: "Delete a WordPress service.",
-      example: { projectName: "sample-project", serviceName: "wp-blog" },
+      example: { projectName: "sample-project", serviceName: "blog-site" },
     },
   ),
   tool(
@@ -1080,7 +1080,7 @@ directToolSpecs.push(
       keywords: ["database", "db", "postgres", "mysql", "mariadb", "mongo", "redis", "create"],
       safetyClass: "guarded",
       summary: "Create a database service.",
-      example: { projectName: "sample-project", serviceName: "postgres-main", engine: "postgres" },
+      example: { projectName: "sample-project", serviceName: "postgres-db", engine: "postgres" },
     },
   ),
   tool(
@@ -1101,7 +1101,7 @@ directToolSpecs.push(
       keywords: ["database", "db", "inspect", "connection", "status"],
       safetyClass: "safe",
       summary: "Inspect a database service.",
-      example: { projectName: "sample-project", serviceName: "postgres-main", engine: "postgres" },
+      example: { projectName: "sample-project", serviceName: "postgres-db", engine: "postgres" },
     },
   ),
   tool(
@@ -1122,7 +1122,7 @@ directToolSpecs.push(
       keywords: ["database", "db", "delete", "destroy", "remove"],
       safetyClass: "dangerous",
       summary: "Delete a database service.",
-      example: { projectName: "sample-project", serviceName: "postgres-main", engine: "postgres" },
+      example: { projectName: "sample-project", serviceName: "postgres-db", engine: "postgres" },
     },
   ),
   tool(
@@ -1136,7 +1136,7 @@ directToolSpecs.push(
       keywords: ["domain", "domains", "hostnames", "service"],
       safetyClass: "safe",
       summary: "List domains for a service.",
-      example: { projectName: "sample-project", serviceName: "hello-app" },
+      example: { projectName: "sample-project", serviceName: "web-app" },
     },
   ),
   tool(
@@ -1155,7 +1155,7 @@ directToolSpecs.push(
       keywords: ["domain", "host", "https", "ingress", "add"],
       safetyClass: "guarded",
       summary: "Add a domain to a service.",
-      example: { projectName: "sample-project", serviceName: "hello-app", host: "app.example.com", https: true },
+      example: { projectName: "sample-project", serviceName: "web-app", host: "app.example.com", https: true },
     },
   ),
   tool(
@@ -1172,7 +1172,7 @@ directToolSpecs.push(
       keywords: ["domain", "delete", "remove", "host"],
       safetyClass: "guarded",
       summary: "Remove a domain from a service.",
-      example: { projectName: "sample-project", serviceName: "hello-app", domainId: "domain-123" },
+      example: { projectName: "sample-project", serviceName: "web-app", domainId: "domain-123" },
     },
   ),
   tool(
@@ -1191,7 +1191,7 @@ directToolSpecs.push(
       keywords: ["port", "ports", "expose", "publish", "tcp", "udp"],
       safetyClass: "guarded",
       summary: "Expose a port for a service.",
-      example: { projectName: "sample-project", serviceName: "hello-app", publishedPort: 8080, targetPort: 3000 },
+      example: { projectName: "sample-project", serviceName: "web-app", publishedPort: 8080, targetPort: 3000 },
     },
   ),
   tool(
@@ -1205,7 +1205,7 @@ directToolSpecs.push(
       keywords: ["port", "ports", "published", "service"],
       safetyClass: "safe",
       summary: "List exposed ports for a service.",
-      example: { projectName: "sample-project", serviceName: "hello-app" },
+      example: { projectName: "sample-project", serviceName: "web-app" },
     },
   ),
   tool(
@@ -1224,7 +1224,7 @@ directToolSpecs.push(
       keywords: ["mount", "volume", "storage", "bind", "path"],
       safetyClass: "guarded",
       summary: "Create a volume mount for a service.",
-      example: { projectName: "sample-project", serviceName: "hello-app", mountPath: "/data", name: "hello-data" },
+      example: { projectName: "sample-project", serviceName: "web-app", mountPath: "/data", name: "app-data" },
     },
   ),
   tool(
@@ -1238,7 +1238,7 @@ directToolSpecs.push(
       keywords: ["mount", "volume", "storage", "service"],
       safetyClass: "safe",
       summary: "List volume mounts for a service.",
-      example: { projectName: "sample-project", serviceName: "hello-app" },
+      example: { projectName: "sample-project", serviceName: "web-app" },
     },
   ),
   tool(
@@ -1266,7 +1266,7 @@ directToolSpecs.push(
       keywords: ["service", "stats", "cpu", "memory", "usage"],
       safetyClass: "safe",
       summary: "Return resource stats for a service.",
-      example: { projectName: "sample-project", serviceName: "hello-app" },
+      example: { projectName: "sample-project", serviceName: "web-app" },
     },
   ),
   tool(
@@ -1342,7 +1342,7 @@ extraCapabilitySpecs.push(
     description: "Escape hatch for read-only tRPC procedures not covered by the curated catalog.",
     safetyClass: "guarded",
     keywords: ["trpc", "raw", "query", "escape", "fallback"],
-    example: { procedure: rawProcedureExamples.read, input: { projectName: "sample-project", serviceName: "blog" } },
+    example: { procedure: rawProcedureExamples.read, input: { projectName: "sample-project", serviceName: "blog-site" } },
     discoverable: true,
     aliases: [],
     argsSchema: {
@@ -1369,7 +1369,7 @@ extraCapabilitySpecs.push(
     description: "Escape hatch for write tRPC procedures not covered by the curated catalog.",
     safetyClass: "dangerous",
     keywords: ["trpc", "raw", "mutation", "escape", "fallback", "write"],
-    example: { procedure: rawProcedureExamples.write, input: { projectName: "sample-project", serviceName: "devbox" } },
+    example: { procedure: rawProcedureExamples.write, input: { projectName: "sample-project", serviceName: "dev-box" } },
     discoverable: true,
     aliases: [],
     argsSchema: {

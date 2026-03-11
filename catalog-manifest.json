@@ -2254,7 +2254,7 @@
       },
       "example": {
         "projectName": "sample-project",
-        "serviceName": "easypanel-mcp"
+        "serviceName": "sample-service"
       }
     },
     {
@@ -2290,7 +2290,7 @@
       },
       "example": {
         "projectName": "sample-project",
-        "serviceName": "easypanel-mcp",
+        "serviceName": "sample-service",
         "notes": "Managed by MCP"
       }
     },
@@ -2322,7 +2322,7 @@
       },
       "example": {
         "projectName": "sample-project",
-        "serviceName": "easypanel-mcp"
+        "serviceName": "sample-service"
       }
     },
     {
@@ -2363,9 +2363,9 @@
       },
       "example": {
         "oldProjectName": "sample-project",
-        "oldServiceName": "easypanel-mcp",
+        "oldServiceName": "sample-service",
         "newProjectName": "target-project",
-        "newServiceName": "easypanel-mcp"
+        "newServiceName": "renamed-service"
       }
     },
     {
@@ -2396,7 +2396,7 @@
       },
       "example": {
         "projectName": "sample-project",
-        "serviceName": "hello-app"
+        "serviceName": "web-app"
       }
     },
     {
@@ -2427,7 +2427,7 @@
       },
       "example": {
         "projectName": "sample-project",
-        "serviceName": "hello-app"
+        "serviceName": "web-app"
       }
     },
     {
@@ -2458,7 +2458,7 @@
       },
       "example": {
         "projectName": "sample-project",
-        "serviceName": "hello-app"
+        "serviceName": "web-app"
       }
     },
     {
@@ -2489,7 +2489,7 @@
       },
       "example": {
         "projectName": "sample-project",
-        "serviceName": "hello-app"
+        "serviceName": "web-app"
       }
     },
     {
@@ -2520,7 +2520,7 @@
       },
       "example": {
         "projectName": "sample-project",
-        "serviceName": "hello-app"
+        "serviceName": "web-app"
       }
     },
     {
@@ -2551,7 +2551,7 @@
       },
       "example": {
         "projectName": "sample-project",
-        "serviceName": "hello-app"
+        "serviceName": "web-app"
       }
     },
     {
@@ -2582,7 +2582,7 @@
       },
       "example": {
         "projectName": "sample-project",
-        "serviceName": "hello-app"
+        "serviceName": "web-app"
       }
     },
     {
@@ -2618,7 +2618,7 @@
       },
       "example": {
         "projectName": "sample-project",
-        "serviceName": "hello-app",
+        "serviceName": "web-app",
         "image": "nginx:latest"
       }
     },
@@ -2668,9 +2668,9 @@
       },
       "example": {
         "projectName": "sample-project",
-        "serviceName": "hello-app",
-        "owner": "dray-supadev",
-        "repo": "easypanel-mcp"
+        "serviceName": "web-app",
+        "owner": "example-user",
+        "repo": "example-repo"
       }
     },
     {
@@ -2706,7 +2706,7 @@
       },
       "example": {
         "projectName": "sample-project",
-        "serviceName": "hello-app",
+        "serviceName": "web-app",
         "env": "NODE_ENV=production"
       }
     },
@@ -2754,7 +2754,7 @@
       },
       "example": {
         "projectName": "sample-project",
-        "serviceName": "hello-app",
+        "serviceName": "web-app",
         "memoryLimit": 512,
         "cpuLimit": 1
       }
@@ -2787,7 +2787,7 @@
       },
       "example": {
         "projectName": "sample-project",
-        "serviceName": "devbox"
+        "serviceName": "dev-box"
       }
     },
     {
@@ -2818,7 +2818,7 @@
       },
       "example": {
         "projectName": "sample-project",
-        "serviceName": "devbox"
+        "serviceName": "dev-box"
       }
     },
     {
@@ -2849,7 +2849,7 @@
       },
       "example": {
         "projectName": "sample-project",
-        "serviceName": "devbox"
+        "serviceName": "dev-box"
       }
     },
     {
@@ -2880,7 +2880,7 @@
       },
       "example": {
         "projectName": "sample-project",
-        "serviceName": "devbox"
+        "serviceName": "dev-box"
       }
     },
     {
@@ -2911,7 +2911,7 @@
       },
       "example": {
         "projectName": "sample-project",
-        "serviceName": "devbox"
+        "serviceName": "dev-box"
       }
     },
     {
@@ -2942,7 +2942,7 @@
       },
       "example": {
         "projectName": "sample-project",
-        "serviceName": "devbox"
+        "serviceName": "dev-box"
       }
     },
     {
@@ -3066,7 +3066,7 @@
       },
       "example": {
         "projectName": "sample-project",
-        "serviceName": "wp-blog"
+        "serviceName": "blog-site"
       }
     },
     {
@@ -3097,7 +3097,7 @@
       },
       "example": {
         "projectName": "sample-project",
-        "serviceName": "wp-blog"
+        "serviceName": "blog-site"
       }
     },
     {
@@ -3128,7 +3128,7 @@
       },
       "example": {
         "projectName": "sample-project",
-        "serviceName": "wp-blog"
+        "serviceName": "blog-site"
       }
     },
     {
@@ -3159,7 +3159,7 @@
       },
       "example": {
         "projectName": "sample-project",
-        "serviceName": "wp-blog"
+        "serviceName": "blog-site"
       }
     },
     {
@@ -3190,7 +3190,7 @@
       },
       "example": {
         "projectName": "sample-project",
-        "serviceName": "wp-blog"
+        "serviceName": "blog-site"
       }
     },
     {
@@ -3221,7 +3221,7 @@
       },
       "example": {
         "projectName": "sample-project",
-        "serviceName": "wp-blog"
+        "serviceName": "blog-site"
       }
     },
     {
@@ -3463,7 +3463,7 @@
       },
       "example": {
         "projectName": "sample-project",
-        "serviceName": "postgres-main",
+        "serviceName": "postgres-db",
         "engine": "postgres"
       }
     },
@@ -3507,7 +3507,7 @@
       },
       "example": {
         "projectName": "sample-project",
-        "serviceName": "postgres-main",
+        "serviceName": "postgres-db",
         "engine": "postgres"
       }
     },
@@ -3551,7 +3551,7 @@
       },
       "example": {
         "projectName": "sample-project",
-        "serviceName": "postgres-main",
+        "serviceName": "postgres-db",
         "engine": "postgres"
       }
     },
@@ -3583,7 +3583,7 @@
       },
       "example": {
         "projectName": "sample-project",
-        "serviceName": "hello-app"
+        "serviceName": "web-app"
       }
     },
     {
@@ -3627,7 +3627,7 @@
       },
       "example": {
         "projectName": "sample-project",
-        "serviceName": "hello-app",
+        "serviceName": "web-app",
         "host": "app.example.com",
         "https": true
       }
@@ -3665,7 +3665,7 @@
       },
       "example": {
         "projectName": "sample-project",
-        "serviceName": "hello-app",
+        "serviceName": "web-app",
         "domainId": "domain-123"
       }
     },
@@ -3715,7 +3715,7 @@
       },
       "example": {
         "projectName": "sample-project",
-        "serviceName": "hello-app",
+        "serviceName": "web-app",
         "publishedPort": 8080,
         "targetPort": 3000
       }
@@ -3748,7 +3748,7 @@
       },
       "example": {
         "projectName": "sample-project",
-        "serviceName": "hello-app"
+        "serviceName": "web-app"
       }
     },
     {
@@ -3792,9 +3792,9 @@
       },
       "example": {
         "projectName": "sample-project",
-        "serviceName": "hello-app",
+        "serviceName": "web-app",
         "mountPath": "/data",
-        "name": "hello-data"
+        "name": "app-data"
       }
     },
     {
@@ -3825,7 +3825,7 @@
       },
       "example": {
         "projectName": "sample-project",
-        "serviceName": "hello-app"
+        "serviceName": "web-app"
       }
     },
     {
@@ -3871,7 +3871,7 @@
       },
       "example": {
         "projectName": "sample-project",
-        "serviceName": "hello-app"
+        "serviceName": "web-app"
       }
     },
     {
@@ -3941,7 +3941,7 @@
         "procedure": "services.wordpress.inspectService",
         "input": {
           "projectName": "sample-project",
-          "serviceName": "blog"
+          "serviceName": "blog-site"
         }
       }
     },
@@ -3975,7 +3975,7 @@
         "procedure": "services.box.createService",
         "input": {
           "projectName": "sample-project",
-          "serviceName": "devbox"
+          "serviceName": "dev-box"
         }
       }
     }

@@ -23,7 +23,7 @@ function createFakeContext() {
         if (procedure === "projects.listProjectsAndServices") {
           return {
             projects: [{ name: "sample-project" }],
-            services: [{ name: "mcp", projectName: "sample-project", ports: [{ published: 3101 }] }],
+            services: [{ name: "sample-service", projectName: "sample-project", ports: [{ published: 3101 }] }],
           };
         }
         return { procedure, input };
@@ -126,7 +126,7 @@ test("legacy list_projects_services alias returns sanitized data", async () => {
   const result = await executeReadCapability(ctx, "ep.list_projects_services", "{\"projectName\":\"sample-project\"}");
   assert.equal(result.ok, true);
   if (result.ok) {
-    assert.deepEqual(result.data, [{ project: "sample-project", services: [{ serviceName: "mcp", ports: [3101] }] }]);
+    assert.deepEqual(result.data, [{ project: "sample-project", services: [{ serviceName: "sample-service", ports: [3101] }] }]);
   }
 });
 
@@ -154,7 +154,7 @@ test("app creation dispatches to the services.app namespace", async () => {
   const result = await executeWriteCapability(
     ctx,
     "ep.create_app",
-    "{\"projectName\":\"sample-project\",\"serviceName\":\"hello-app\"}",
+    "{\"projectName\":\"sample-project\",\"serviceName\":\"web-app\"}",
     true,
   );
   assert.equal(result.ok, true);
@@ -162,7 +162,7 @@ test("app creation dispatches to the services.app namespace", async () => {
     {
       kind: "mutate",
       procedure: "services.app.createService",
-      input: { projectName: "sample-project", serviceName: "hello-app" },
+      input: { projectName: "sample-project", serviceName: "web-app" },
     },
   ]);
 });
@@ -172,14 +172,14 @@ test("database inspection dispatches to the services.<engine> namespace", async 
   const result = await executeReadCapability(
     ctx,
     "ep.inspect_database",
-    "{\"projectName\":\"sample-project\",\"serviceName\":\"postgres\",\"engine\":\"postgres\"}",
+    "{\"projectName\":\"sample-project\",\"serviceName\":\"postgres-db\",\"engine\":\"postgres\"}",
   );
   assert.equal(result.ok, true);
   assert.deepEqual(calls, [
     {
       kind: "query",
       procedure: "services.postgres.inspectService",
-      input: { projectName: "sample-project", serviceName: "postgres" },
+      input: { projectName: "sample-project", serviceName: "postgres-db" },
     },
   ]);
 });
@@ -189,7 +189,7 @@ test("wordpress creation dispatches to the services.wordpress namespace", async 
   const result = await executeWriteCapability(
     ctx,
     "ep.create_wordpress",
-    "{\"projectName\":\"sample-project\",\"serviceName\":\"wp-blog\"}",
+    "{\"projectName\":\"sample-project\",\"serviceName\":\"blog-site\"}",
     true,
   );
   assert.equal(result.ok, true);
@@ -197,7 +197,7 @@ test("wordpress creation dispatches to the services.wordpress namespace", async 
     {
       kind: "mutate",
       procedure: "services.wordpress.createService",
-      input: { projectName: "sample-project", serviceName: "wp-blog" },
+      input: { projectName: "sample-project", serviceName: "blog-site" },
     },
   ]);
 });
@@ -207,14 +207,14 @@ test("trpc raw read forces query mode", async () => {
   const result = await executeReadCapability(
     ctx,
     "ep.trpc_raw_read",
-    "{\"procedure\":\"services.wordpress.inspectService\",\"input\":{\"projectName\":\"sample-project\",\"serviceName\":\"blog\"}}",
+    "{\"procedure\":\"services.wordpress.inspectService\",\"input\":{\"projectName\":\"sample-project\",\"serviceName\":\"blog-site\"}}",
   );
   assert.equal(result.ok, true);
   assert.deepEqual(calls, [
     {
       kind: "query",
       procedure: "services.wordpress.inspectService",
-      input: { projectName: "sample-project", serviceName: "blog" },
+      input: { projectName: "sample-project", serviceName: "blog-site" },
     },
   ]);
 });
@@ -224,7 +224,7 @@ test("trpc raw write forces mutation mode", async () => {
   const result = await executeWriteCapability(
     ctx,
     "ep.trpc_raw_write",
-    "{\"procedure\":\"services.box.createService\",\"input\":{\"projectName\":\"sample-project\",\"serviceName\":\"devbox\"}}",
+    "{\"procedure\":\"services.box.createService\",\"input\":{\"projectName\":\"sample-project\",\"serviceName\":\"dev-box\"}}",
     true,
   );
   assert.equal(result.ok, true);
@@ -232,7 +232,7 @@ test("trpc raw write forces mutation mode", async () => {
     {
       kind: "mutate",
       procedure: "services.box.createService",
-      input: { projectName: "sample-project", serviceName: "devbox" },
+      input: { projectName: "sample-project", serviceName: "dev-box" },
     },
   ]);
 });

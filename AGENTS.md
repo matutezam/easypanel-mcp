@@ -1,6 +1,6 @@
 # Repository Instructions
 
-This fork is tied to the real EasyPanel version running on the deployed host, not just to upstream `dray-supadev/easypanel-mcp`.
+This repository tracks the deployed EasyPanel instance as the source of truth, not just upstream `dray-supadev/easypanel-mcp`.
 
 ## EasyPanel Compatibility Rules
 
@@ -19,18 +19,18 @@ When EasyPanel is upgraded, future agents should follow this order before changi
 2. Run compatibility audit against the live EasyPanel instance:
    - `EASYPANEL_URL=http://your-easypanel-host:3000 EASYPANEL_TOKEN=... npm run audit:openapi`
 3. If the audit fails:
-   - patch [src/catalog.ts](/src/catalog.ts)
-   - update discovery/ranking if needed in [src/progressive.ts](/src/progressive.ts)
-   - update tests in [test/progressive.test.ts](/test/progressive.test.ts)
-   - regenerate [catalog-manifest.json](/catalog-manifest.json) with `npm run generate:manifest`
+   - patch `src/catalog.ts`
+   - update discovery/ranking if needed in `src/progressive.ts`
+   - update tests in `test/progressive.test.ts`
+   - regenerate `catalog-manifest.json` with `npm run generate:manifest`
    - rerun `build`, `test`, and `audit:openapi`
 4. Only then push and redeploy.
 
 ## Deployment Assumptions
 
-- The EasyPanel service for this fork is intended to run with `MCP_PROFILE=progressive`.
+- The EasyPanel service for this repository is intended to run with `MCP_PROFILE=progressive`.
 - n8n is no longer the source of truth for the progressive catalog.
-- The MCP should use internal EasyPanel networking, not a published host port, whenever possible.
+- The MCP should use an internal URL reachable from the EasyPanel container network whenever possible.
 
 ## Change Policy
 
