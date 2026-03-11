@@ -73,6 +73,46 @@ To avoid breakage:
 2. Keep compatibility changes in focused commits with clear messages.
 3. Add a smoke checklist for both `readonly` and `full` modes.
 
+Current fork assumption:
+- EasyPanel `2.26.x` is the target baseline.
+- Service-specific procedures are expected under `services.*`.
+- The live panel's `/api/openapi.json` is the source of truth for compatibility checks.
+
+## Mandatory Post-Upgrade Workflow
+
+After updating EasyPanel on the deployed host, do not redeploy this MCP blindly.
+
+Run this sequence first:
+
+```bash
+npm run build
+npm test
+EASYPANEL_URL=http://your-easypanel-host:3000 EASYPANEL_TOKEN=your-token npm run audit:openapi
+```
+
+Interpretation:
+- If `audit:openapi` passes, the curated catalog still matches the live EasyPanel API surface.
+- If `audit:openapi` fails, patch the fork before deploying:
+  - update [src/catalog.ts](./src/catalog.ts)
+  - update [src/progressive.ts](./src/progressive.ts) if discovery keywords/categories changed
+  - update [test/progressive.test.ts](./test/progressive.test.ts)
+  - regenerate [catalog-manifest.json](./catalog-manifest.json) with `npm run generate:manifest`
+  - rerun `build`, `test`, and `audit:openapi`
+
+Only after that should `main` be pushed and redeployed in EasyPanel.
+
+## Runtime Expectations
+
+- Deploy from the fork: `<your-github-user>/easypanel-mcp`
+- Branch: `main`
+- Preferred profile: `MCP_PROFILE=progressive`
+- Preferred EasyPanel URL inside the container: `http://your-easypanel-host:3000`
+- Prefer internal networking over published host ports
+
+This prevents two common failures:
+- upstream router names drifting away from the real EasyPanel version
+- EasyPanel upgrades silently changing the API while the MCP still deploys successfully
+
 Suggested smoke checks after sync:
 - `GET /health` returns `200` and expected `auth` state.
 - `list_projects` works through MCP.
