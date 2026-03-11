@@ -22,7 +22,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/dray-supadev/easypanel-mcp"
+    "url": "https://github.com/<your-github-user>/easypanel-mcp"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.12.1"

@@ -28,7 +28,7 @@ The response contains `"token":"xxx"` — that's your API token.
 
 1. Create a new project (e.g. `mcp`)
 2. Create an **App** service
-3. Source → **GitHub** → `dray-supadev/easypanel-mcp`, branch `main`
+3. Source → **GitHub** → `<your-github-user>/easypanel-mcp`, branch `main`
 4. Set environment variables:
    ```
    EASYPANEL_URL=http://your-easypanel-host:3000
@@ -75,7 +75,7 @@ Restart Claude Desktop. Done! Ask Claude to "show my projects" 🎉
 Run the MCP server locally via stdio (no deployment needed):
 
 ```bash
-git clone https://github.com/dray-supadev/easypanel-mcp.git
+git clone https://github.com/<your-github-user>/easypanel-mcp.git
 cd easypanel-mcp
 npm install && npm run build
 ```
