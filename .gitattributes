@@ -1,0 +1,4 @@
+# Keep local/operational guidance out of source archives.
+AGENTS.md export-ignore
+AGENTS.local.example.md export-ignore
+FORK_WORKFLOW.md export-ignore
