@@ -1,0 +1,2863 @@
+{
+  "name": "easypanel",
+  "profiles": {
+    "direct": {
+      "exposedTools": 42
+    },
+    "progressive": {
+      "exposedTools": 4,
+      "discoverableCapabilities": 43
+    }
+  },
+  "directTools": [
+    {
+      "toolName": "list_projects",
+      "description": "List all projects and their services",
+      "operationKind": "read",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false
+      },
+      "progressive": {
+        "capabilityId": "ep.list_projects",
+        "category": "projects",
+        "safetyClass": "safe",
+        "keywords": [
+          "project",
+          "projects",
+          "services",
+          "inventory",
+          "overview"
+        ],
+        "aliases": [
+          "ep.list_projects_services"
+        ],
+        "discoverable": true
+      }
+    },
+    {
+      "toolName": "create_project",
+      "description": "Create a new project",
+      "operationKind": "write",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Project name (lowercase, no spaces)"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "additionalProperties": false
+      },
+      "progressive": {
+        "capabilityId": "ep.create_project",
+        "category": "projects",
+        "safetyClass": "guarded",
+        "keywords": [
+          "project",
+          "create",
+          "new",
+          "provision"
+        ],
+        "aliases": [],
+        "discoverable": true
+      }
+    },
+    {
+      "toolName": "destroy_project",
+      "description": "Delete a project and all its services",
+      "operationKind": "write",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "projectName": {
+            "type": "string",
+            "description": "Project name"
+          }
+        },
+        "required": [
+          "projectName"
+        ],
+        "additionalProperties": false
+      },
+      "progressive": {
+        "capabilityId": "ep.destroy_project",
+        "category": "projects",
+        "safetyClass": "dangerous",
+        "keywords": [
+          "project",
+          "delete",
+          "destroy",
+          "remove"
+        ],
+        "aliases": [],
+        "discoverable": true
+      }
+    },
+    {
+      "toolName": "inspect_project",
+      "description": "Get project details and Docker containers",
+      "operationKind": "read",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "projectName": {
+            "type": "string",
+            "description": "Project name"
+          }
+        },
+        "required": [
+          "projectName"
+        ],
+        "additionalProperties": false
+      },
+      "progressive": {
+        "capabilityId": "ep.inspect_project",
+        "category": "projects",
+        "safetyClass": "safe",
+        "keywords": [
+          "project",
+          "inspect",
+          "details",
+          "containers"
+        ],
+        "aliases": [],
+        "discoverable": true
+      }
+    },
+    {
+      "toolName": "create_app",
+      "description": "Create an app service",
+      "operationKind": "write",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "projectName": {
+            "type": "string",
+            "description": "Project name"
+          },
+          "serviceName": {
+            "type": "string",
+            "description": "Service name"
+          }
+        },
+        "required": [
+          "projectName",
+          "serviceName"
+        ],
+        "additionalProperties": false
+      },
+      "progressive": {
+        "capabilityId": "ep.create_app",
+        "category": "apps",
+        "safetyClass": "guarded",
+        "keywords": [
+          "app",
+          "service",
+          "create",
+          "deployable",
+          "web"
+        ],
+        "aliases": [],
+        "discoverable": true
+      }
+    },
+    {
+      "toolName": "inspect_app",
+      "description": "Get app service details (env, domains, build, source)",
+      "operationKind": "read",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "projectName": {
+            "type": "string",
+            "description": "Project name"
+          },
+          "serviceName": {
+            "type": "string",
+            "description": "Service name"
+          }
+        },
+        "required": [
+          "projectName",
+          "serviceName"
+        ],
+        "additionalProperties": false
+      },
+      "progressive": {
+        "capabilityId": "ep.inspect_app",
+        "category": "apps",
+        "safetyClass": "safe",
+        "keywords": [
+          "app",
+          "service",
+          "inspect",
+          "env",
+          "domains",
+          "source"
+        ],
+        "aliases": [],
+        "discoverable": true
+      }
+    },
+    {
+      "toolName": "deploy_app",
+      "description": "Trigger deployment for an app",
+      "operationKind": "write",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "projectName": {
+            "type": "string",
+            "description": "Project name"
+          },
+          "serviceName": {
+            "type": "string",
+            "description": "Service name"
+          }
+        },
+        "required": [
+          "projectName",
+          "serviceName"
+        ],
+        "additionalProperties": false
+      },
+      "progressive": {
+        "capabilityId": "ep.deploy_app",
+        "category": "apps",
+        "safetyClass": "guarded",
+        "keywords": [
+          "app",
+          "deploy",
+          "build",
+          "release"
+        ],
+        "aliases": [],
+        "discoverable": true
+      }
+    },
+    {
+      "toolName": "start_app",
+      "description": "Start an app service",
+      "operationKind": "write",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "projectName": {
+            "type": "string",
+            "description": "Project name"
+          },
+          "serviceName": {
+            "type": "string",
+            "description": "Service name"
+          }
+        },
+        "required": [
+          "projectName",
+          "serviceName"
+        ],
+        "additionalProperties": false
+      },
+      "progressive": {
+        "capabilityId": "ep.start_app",
+        "category": "apps",
+        "safetyClass": "guarded",
+        "keywords": [
+          "app",
+          "start",
+          "service",
+          "run"
+        ],
+        "aliases": [],
+        "discoverable": true
+      }
+    },
+    {
+      "toolName": "stop_app",
+      "description": "Stop an app service",
+      "operationKind": "write",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "projectName": {
+            "type": "string",
+            "description": "Project name"
+          },
+          "serviceName": {
+            "type": "string",
+            "description": "Service name"
+          }
+        },
+        "required": [
+          "projectName",
+          "serviceName"
+        ],
+        "additionalProperties": false
+      },
+      "progressive": {
+        "capabilityId": "ep.stop_app",
+        "category": "apps",
+        "safetyClass": "guarded",
+        "keywords": [
+          "app",
+          "stop",
+          "service",
+          "halt"
+        ],
+        "aliases": [],
+        "discoverable": true
+      }
+    },
+    {
+      "toolName": "restart_app",
+      "description": "Restart an app service",
+      "operationKind": "write",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "projectName": {
+            "type": "string",
+            "description": "Project name"
+          },
+          "serviceName": {
+            "type": "string",
+            "description": "Service name"
+          }
+        },
+        "required": [
+          "projectName",
+          "serviceName"
+        ],
+        "additionalProperties": false
+      },
+      "progressive": {
+        "capabilityId": "ep.restart_app",
+        "category": "apps",
+        "safetyClass": "guarded",
+        "keywords": [
+          "app",
+          "restart",
+          "service",
+          "reload"
+        ],
+        "aliases": [],
+        "discoverable": true
+      }
+    },
+    {
+      "toolName": "destroy_app",
+      "description": "Delete an app service",
+      "operationKind": "write",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "projectName": {
+            "type": "string",
+            "description": "Project name"
+          },
+          "serviceName": {
+            "type": "string",
+            "description": "Service name"
+          }
+        },
+        "required": [
+          "projectName",
+          "serviceName"
+        ],
+        "additionalProperties": false
+      },
+      "progressive": {
+        "capabilityId": "ep.destroy_app",
+        "category": "apps",
+        "safetyClass": "dangerous",
+        "keywords": [
+          "app",
+          "delete",
+          "destroy",
+          "remove"
+        ],
+        "aliases": [],
+        "discoverable": true
+      }
+    },
+    {
+      "toolName": "set_app_source_image",
+      "description": "Set app source to a Docker image",
+      "operationKind": "write",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "projectName": {
+            "type": "string",
+            "description": "Project name"
+          },
+          "serviceName": {
+            "type": "string",
+            "description": "Service name"
+          },
+          "image": {
+            "type": "string",
+            "description": "Docker image (e.g. nginx:latest)"
+          }
+        },
+        "required": [
+          "projectName",
+          "serviceName",
+          "image"
+        ],
+        "additionalProperties": false
+      },
+      "progressive": {
+        "capabilityId": "ep.set_app_source_image",
+        "category": "apps",
+        "safetyClass": "guarded",
+        "keywords": [
+          "app",
+          "image",
+          "docker",
+          "source"
+        ],
+        "aliases": [],
+        "discoverable": true
+      }
+    },
+    {
+      "toolName": "set_app_source_github",
+      "description": "Set app source to a GitHub repo",
+      "operationKind": "write",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "projectName": {
+            "type": "string",
+            "description": "Project name"
+          },
+          "serviceName": {
+            "type": "string",
+            "description": "Service name"
+          },
+          "owner": {
+            "type": "string",
+            "description": "GitHub owner"
+          },
+          "repo": {
+            "type": "string",
+            "description": "GitHub repository"
+          },
+          "branch": {
+            "type": "string",
+            "description": "Git branch"
+          },
+          "path": {
+            "type": "string",
+            "description": "Subdirectory"
+          }
+        },
+        "required": [
+          "projectName",
+          "serviceName",
+          "owner",
+          "repo"
+        ],
+        "additionalProperties": false
+      },
+      "progressive": {
+        "capabilityId": "ep.set_app_source_github",
+        "category": "apps",
+        "safetyClass": "guarded",
+        "keywords": [
+          "app",
+          "github",
+          "git",
+          "source",
+          "repo"
+        ],
+        "aliases": [],
+        "discoverable": true
+      }
+    },
+    {
+      "toolName": "set_app_env",
+      "description": "Update environment variables for an app",
+      "operationKind": "write",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "projectName": {
+            "type": "string",
+            "description": "Project name"
+          },
+          "serviceName": {
+            "type": "string",
+            "description": "Service name"
+          },
+          "env": {
+            "type": "string",
+            "description": "KEY=VALUE lines"
+          }
+        },
+        "required": [
+          "projectName",
+          "serviceName",
+          "env"
+        ],
+        "additionalProperties": false
+      },
+      "progressive": {
+        "capabilityId": "ep.set_app_env",
+        "category": "apps",
+        "safetyClass": "guarded",
+        "keywords": [
+          "app",
+          "env",
+          "environment",
+          "variables",
+          "config"
+        ],
+        "aliases": [],
+        "discoverable": true
+      }
+    },
+    {
+      "toolName": "set_app_resources",
+      "description": "Set CPU/memory limits for an app",
+      "operationKind": "write",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "projectName": {
+            "type": "string",
+            "description": "Project name"
+          },
+          "serviceName": {
+            "type": "string",
+            "description": "Service name"
+          },
+          "memoryLimit": {
+            "type": "number",
+            "description": "Memory limit MB"
+          },
+          "memoryReservation": {
+            "type": "number",
+            "description": "Memory reservation MB"
+          },
+          "cpuLimit": {
+            "type": "number",
+            "description": "CPU limit (1 = 1 core)"
+          },
+          "cpuReservation": {
+            "type": "number",
+            "description": "CPU reservation"
+          }
+        },
+        "required": [
+          "projectName",
+          "serviceName"
+        ],
+        "additionalProperties": false
+      },
+      "progressive": {
+        "capabilityId": "ep.set_app_resources",
+        "category": "apps",
+        "safetyClass": "guarded",
+        "keywords": [
+          "app",
+          "resources",
+          "cpu",
+          "memory",
+          "limits"
+        ],
+        "aliases": [],
+        "discoverable": true
+      }
+    },
+    {
+      "toolName": "create_compose",
+      "description": "Create a Docker Compose service",
+      "operationKind": "write",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "projectName": {
+            "type": "string",
+            "description": "Project name"
+          },
+          "serviceName": {
+            "type": "string",
+            "description": "Service name"
+          }
+        },
+        "required": [
+          "projectName",
+          "serviceName"
+        ],
+        "additionalProperties": false
+      },
+      "progressive": {
+        "capabilityId": "ep.create_compose",
+        "category": "compose",
+        "safetyClass": "guarded",
+        "keywords": [
+          "compose",
+          "docker",
+          "stack",
+          "service",
+          "create"
+        ],
+        "aliases": [],
+        "discoverable": true
+      }
+    },
+    {
+      "toolName": "inspect_compose",
+      "description": "Get compose service details",
+      "operationKind": "read",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "projectName": {
+            "type": "string",
+            "description": "Project name"
+          },
+          "serviceName": {
+            "type": "string",
+            "description": "Service name"
+          }
+        },
+        "required": [
+          "projectName",
+          "serviceName"
+        ],
+        "additionalProperties": false
+      },
+      "progressive": {
+        "capabilityId": "ep.inspect_compose",
+        "category": "compose",
+        "safetyClass": "safe",
+        "keywords": [
+          "compose",
+          "docker",
+          "stack",
+          "inspect"
+        ],
+        "aliases": [],
+        "discoverable": true
+      }
+    },
+    {
+      "toolName": "deploy_compose",
+      "description": "Deploy a compose service",
+      "operationKind": "write",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "projectName": {
+            "type": "string",
+            "description": "Project name"
+          },
+          "serviceName": {
+            "type": "string",
+            "description": "Service name"
+          }
+        },
+        "required": [
+          "projectName",
+          "serviceName"
+        ],
+        "additionalProperties": false
+      },
+      "progressive": {
+        "capabilityId": "ep.deploy_compose",
+        "category": "compose",
+        "safetyClass": "guarded",
+        "keywords": [
+          "compose",
+          "docker",
+          "stack",
+          "deploy"
+        ],
+        "aliases": [],
+        "discoverable": true
+      }
+    },
+    {
+      "toolName": "cleanup_docker",
+      "description": "Clean up unused Docker images",
+      "operationKind": "write",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false
+      },
+      "progressive": {
+        "capabilityId": "ep.cleanup_docker",
+        "category": "system",
+        "safetyClass": "guarded",
+        "keywords": [
+          "docker",
+          "cleanup",
+          "images",
+          "maintenance"
+        ],
+        "aliases": [],
+        "discoverable": true
+      }
+    },
+    {
+      "toolName": "system_prune",
+      "description": "Docker system prune (remove all unused data)",
+      "operationKind": "write",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false
+      },
+      "progressive": {
+        "capabilityId": "ep.system_prune",
+        "category": "system",
+        "safetyClass": "dangerous",
+        "keywords": [
+          "docker",
+          "prune",
+          "cleanup",
+          "unused",
+          "system"
+        ],
+        "aliases": [],
+        "discoverable": true
+      }
+    },
+    {
+      "toolName": "restart_panel",
+      "description": "Restart EasyPanel",
+      "operationKind": "write",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false
+      },
+      "progressive": {
+        "capabilityId": "ep.restart_panel",
+        "category": "system",
+        "safetyClass": "dangerous",
+        "keywords": [
+          "easypanel",
+          "restart",
+          "panel",
+          "admin"
+        ],
+        "aliases": [],
+        "discoverable": true
+      }
+    },
+    {
+      "toolName": "reboot_server",
+      "description": "Reboot the server",
+      "operationKind": "write",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false
+      },
+      "progressive": {
+        "capabilityId": "ep.reboot_server",
+        "category": "system",
+        "safetyClass": "dangerous",
+        "keywords": [
+          "server",
+          "reboot",
+          "host",
+          "restart",
+          "admin"
+        ],
+        "aliases": [],
+        "discoverable": true
+      }
+    },
+    {
+      "toolName": "list_users",
+      "description": "List panel users",
+      "operationKind": "read",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false
+      },
+      "progressive": {
+        "capabilityId": "ep.list_users",
+        "category": "admin",
+        "safetyClass": "safe",
+        "keywords": [
+          "users",
+          "panel",
+          "admin",
+          "accounts"
+        ],
+        "aliases": [],
+        "discoverable": true
+      }
+    },
+    {
+      "toolName": "list_certificates",
+      "description": "List SSL certificates",
+      "operationKind": "read",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false
+      },
+      "progressive": {
+        "capabilityId": "ep.list_certificates",
+        "category": "admin",
+        "safetyClass": "safe",
+        "keywords": [
+          "certificates",
+          "ssl",
+          "tls",
+          "domains"
+        ],
+        "aliases": [],
+        "discoverable": true
+      }
+    },
+    {
+      "toolName": "list_nodes",
+      "description": "List cluster nodes",
+      "operationKind": "read",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false
+      },
+      "progressive": {
+        "capabilityId": "ep.list_nodes",
+        "category": "admin",
+        "safetyClass": "safe",
+        "keywords": [
+          "nodes",
+          "cluster",
+          "workers",
+          "infrastructure"
+        ],
+        "aliases": [],
+        "discoverable": true
+      }
+    },
+    {
+      "toolName": "deploy_template",
+      "description": "Deploy from an EasyPanel one-click template",
+      "operationKind": "write",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "projectName": {
+            "type": "string",
+            "description": "Project name"
+          },
+          "schema": {
+            "type": "object",
+            "additionalProperties": true,
+            "description": "Template schema object"
+          }
+        },
+        "required": [
+          "projectName",
+          "schema"
+        ],
+        "additionalProperties": false
+      },
+      "progressive": {
+        "capabilityId": "ep.deploy_template",
+        "category": "templates",
+        "safetyClass": "dangerous",
+        "keywords": [
+          "template",
+          "one-click",
+          "deploy",
+          "schema"
+        ],
+        "aliases": [],
+        "discoverable": true
+      }
+    },
+    {
+      "toolName": "list_actions",
+      "description": "List recent deploy actions/builds. Filter by project or service.",
+      "operationKind": "read",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "projectName": {
+            "type": "string",
+            "description": "Project name"
+          },
+          "serviceName": {
+            "type": "string",
+            "description": "Service name"
+          },
+          "limit": {
+            "type": "number",
+            "description": "Number of actions to return (default 8)"
+          }
+        },
+        "additionalProperties": false
+      },
+      "progressive": {
+        "capabilityId": "ep.list_actions",
+        "category": "actions",
+        "safetyClass": "safe",
+        "keywords": [
+          "actions",
+          "deploy",
+          "build",
+          "history",
+          "logs"
+        ],
+        "aliases": [],
+        "discoverable": true
+      }
+    },
+    {
+      "toolName": "get_action_log",
+      "description": "Get deploy action details including full build/deploy log",
+      "operationKind": "read",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Action ID from list_actions"
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "additionalProperties": false
+      },
+      "progressive": {
+        "capabilityId": "ep.get_action_log",
+        "category": "actions",
+        "safetyClass": "safe",
+        "keywords": [
+          "actions",
+          "log",
+          "build",
+          "deploy",
+          "trace"
+        ],
+        "aliases": [],
+        "discoverable": true
+      }
+    },
+    {
+      "toolName": "trpc_raw",
+      "description": "Call any EasyPanel tRPC procedure directly. 347 procedures across 43 namespaces. Use for anything not covered above.",
+      "operationKind": "mixed",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "procedure": {
+            "type": "string",
+            "description": "Full tRPC procedure name (e.g. 'wordpress.inspectService')"
+          },
+          "input": {
+            "type": "object",
+            "additionalProperties": true,
+            "description": "Input object"
+          },
+          "isMutation": {
+            "type": "boolean",
+            "description": "true for write operations, false for reads (default)"
+          }
+        },
+        "required": [
+          "procedure"
+        ],
+        "additionalProperties": false
+      },
+      "progressive": false
+    },
+    {
+      "toolName": "create_database",
+      "description": "Create a database service",
+      "operationKind": "write",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "projectName": {
+            "type": "string",
+            "description": "Project name"
+          },
+          "serviceName": {
+            "type": "string",
+            "description": "Service name"
+          },
+          "engine": {
+            "type": "string",
+            "enum": [
+              "postgres",
+              "mysql",
+              "mariadb",
+              "mongo",
+              "redis"
+            ],
+            "description": "Database engine"
+          },
+          "password": {
+            "type": "string",
+            "description": "Password (auto-generated if empty)"
+          }
+        },
+        "required": [
+          "projectName",
+          "serviceName",
+          "engine"
+        ],
+        "additionalProperties": false
+      },
+      "progressive": {
+        "capabilityId": "ep.create_database",
+        "category": "databases",
+        "safetyClass": "guarded",
+        "keywords": [
+          "database",
+          "db",
+          "postgres",
+          "mysql",
+          "mariadb",
+          "mongo",
+          "redis",
+          "create"
+        ],
+        "aliases": [],
+        "discoverable": true
+      }
+    },
+    {
+      "toolName": "inspect_database",
+      "description": "Get database service info (connection string, status)",
+      "operationKind": "read",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "projectName": {
+            "type": "string",
+            "description": "Project name"
+          },
+          "serviceName": {
+            "type": "string",
+            "description": "Service name"
+          },
+          "engine": {
+            "type": "string",
+            "enum": [
+              "postgres",
+              "mysql",
+              "mariadb",
+              "mongo",
+              "redis"
+            ],
+            "description": "Database engine"
+          }
+        },
+        "required": [
+          "projectName",
+          "serviceName",
+          "engine"
+        ],
+        "additionalProperties": false
+      },
+      "progressive": {
+        "capabilityId": "ep.inspect_database",
+        "category": "databases",
+        "safetyClass": "safe",
+        "keywords": [
+          "database",
+          "db",
+          "inspect",
+          "connection",
+          "status"
+        ],
+        "aliases": [],
+        "discoverable": true
+      }
+    },
+    {
+      "toolName": "destroy_database",
+      "description": "Delete a database service",
+      "operationKind": "write",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "projectName": {
+            "type": "string",
+            "description": "Project name"
+          },
+          "serviceName": {
+            "type": "string",
+            "description": "Service name"
+          },
+          "engine": {
+            "type": "string",
+            "enum": [
+              "postgres",
+              "mysql",
+              "mariadb",
+              "mongo",
+              "redis"
+            ],
+            "description": "Database engine"
+          }
+        },
+        "required": [
+          "projectName",
+          "serviceName",
+          "engine"
+        ],
+        "additionalProperties": false
+      },
+      "progressive": {
+        "capabilityId": "ep.destroy_database",
+        "category": "databases",
+        "safetyClass": "dangerous",
+        "keywords": [
+          "database",
+          "db",
+          "delete",
+          "destroy",
+          "remove"
+        ],
+        "aliases": [],
+        "discoverable": true
+      }
+    },
+    {
+      "toolName": "list_domains",
+      "description": "List domains for a service",
+      "operationKind": "read",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "projectName": {
+            "type": "string",
+            "description": "Project name"
+          },
+          "serviceName": {
+            "type": "string",
+            "description": "Service name"
+          }
+        },
+        "required": [
+          "projectName",
+          "serviceName"
+        ],
+        "additionalProperties": false
+      },
+      "progressive": {
+        "capabilityId": "ep.list_domains",
+        "category": "domains",
+        "safetyClass": "safe",
+        "keywords": [
+          "domain",
+          "domains",
+          "hostnames",
+          "service"
+        ],
+        "aliases": [],
+        "discoverable": true
+      }
+    },
+    {
+      "toolName": "create_domain",
+      "description": "Add a domain to a service",
+      "operationKind": "write",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "projectName": {
+            "type": "string",
+            "description": "Project name"
+          },
+          "serviceName": {
+            "type": "string",
+            "description": "Service name"
+          },
+          "host": {
+            "type": "string",
+            "description": "Domain (e.g. app.example.com)"
+          },
+          "https": {
+            "type": "boolean",
+            "description": "Enable HTTPS (default true)"
+          },
+          "port": {
+            "type": "number",
+            "description": "Container port"
+          }
+        },
+        "required": [
+          "projectName",
+          "serviceName",
+          "host"
+        ],
+        "additionalProperties": false
+      },
+      "progressive": {
+        "capabilityId": "ep.create_domain",
+        "category": "domains",
+        "safetyClass": "guarded",
+        "keywords": [
+          "domain",
+          "host",
+          "https",
+          "ingress",
+          "add"
+        ],
+        "aliases": [],
+        "discoverable": true
+      }
+    },
+    {
+      "toolName": "delete_domain",
+      "description": "Remove a domain from a service",
+      "operationKind": "write",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "projectName": {
+            "type": "string",
+            "description": "Project name"
+          },
+          "serviceName": {
+            "type": "string",
+            "description": "Service name"
+          },
+          "domainId": {
+            "type": "string",
+            "description": "Domain ID"
+          }
+        },
+        "required": [
+          "projectName",
+          "serviceName",
+          "domainId"
+        ],
+        "additionalProperties": false
+      },
+      "progressive": {
+        "capabilityId": "ep.delete_domain",
+        "category": "domains",
+        "safetyClass": "guarded",
+        "keywords": [
+          "domain",
+          "delete",
+          "remove",
+          "host"
+        ],
+        "aliases": [],
+        "discoverable": true
+      }
+    },
+    {
+      "toolName": "create_port",
+      "description": "Expose a port for a service",
+      "operationKind": "write",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "projectName": {
+            "type": "string",
+            "description": "Project name"
+          },
+          "serviceName": {
+            "type": "string",
+            "description": "Service name"
+          },
+          "publishedPort": {
+            "type": "number",
+            "description": "External port"
+          },
+          "targetPort": {
+            "type": "number",
+            "description": "Container port"
+          },
+          "protocol": {
+            "type": "string",
+            "enum": [
+              "tcp",
+              "udp"
+            ],
+            "description": "Protocol"
+          }
+        },
+        "required": [
+          "projectName",
+          "serviceName",
+          "publishedPort",
+          "targetPort"
+        ],
+        "additionalProperties": false
+      },
+      "progressive": {
+        "capabilityId": "ep.create_port",
+        "category": "ports",
+        "safetyClass": "guarded",
+        "keywords": [
+          "port",
+          "ports",
+          "expose",
+          "publish",
+          "tcp",
+          "udp"
+        ],
+        "aliases": [],
+        "discoverable": true
+      }
+    },
+    {
+      "toolName": "list_ports",
+      "description": "List exposed ports for a service",
+      "operationKind": "read",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "projectName": {
+            "type": "string",
+            "description": "Project name"
+          },
+          "serviceName": {
+            "type": "string",
+            "description": "Service name"
+          }
+        },
+        "required": [
+          "projectName",
+          "serviceName"
+        ],
+        "additionalProperties": false
+      },
+      "progressive": {
+        "capabilityId": "ep.list_ports",
+        "category": "ports",
+        "safetyClass": "safe",
+        "keywords": [
+          "port",
+          "ports",
+          "published",
+          "service"
+        ],
+        "aliases": [],
+        "discoverable": true
+      }
+    },
+    {
+      "toolName": "create_mount",
+      "description": "Create a volume mount for a service",
+      "operationKind": "write",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "projectName": {
+            "type": "string",
+            "description": "Project name"
+          },
+          "serviceName": {
+            "type": "string",
+            "description": "Service name"
+          },
+          "mountPath": {
+            "type": "string",
+            "description": "Path inside container"
+          },
+          "name": {
+            "type": "string",
+            "description": "Volume name"
+          },
+          "hostPath": {
+            "type": "string",
+            "description": "Host path for bind mount"
+          }
+        },
+        "required": [
+          "projectName",
+          "serviceName",
+          "mountPath"
+        ],
+        "additionalProperties": false
+      },
+      "progressive": {
+        "capabilityId": "ep.create_mount",
+        "category": "mounts",
+        "safetyClass": "guarded",
+        "keywords": [
+          "mount",
+          "volume",
+          "storage",
+          "bind",
+          "path"
+        ],
+        "aliases": [],
+        "discoverable": true
+      }
+    },
+    {
+      "toolName": "list_mounts",
+      "description": "List volume mounts for a service",
+      "operationKind": "read",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "projectName": {
+            "type": "string",
+            "description": "Project name"
+          },
+          "serviceName": {
+            "type": "string",
+            "description": "Service name"
+          }
+        },
+        "required": [
+          "projectName",
+          "serviceName"
+        ],
+        "additionalProperties": false
+      },
+      "progressive": {
+        "capabilityId": "ep.list_mounts",
+        "category": "mounts",
+        "safetyClass": "safe",
+        "keywords": [
+          "mount",
+          "volume",
+          "storage",
+          "service"
+        ],
+        "aliases": [],
+        "discoverable": true
+      }
+    },
+    {
+      "toolName": "system_stats",
+      "description": "Get system stats (CPU, memory, disk, network)",
+      "operationKind": "read",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false
+      },
+      "progressive": {
+        "capabilityId": "ep.system_stats",
+        "category": "monitoring",
+        "safetyClass": "safe",
+        "keywords": [
+          "system",
+          "stats",
+          "cpu",
+          "memory",
+          "disk",
+          "network",
+          "host"
+        ],
+        "aliases": [],
+        "discoverable": true
+      }
+    },
+    {
+      "toolName": "service_stats",
+      "description": "Get resource stats for a service",
+      "operationKind": "read",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "projectName": {
+            "type": "string",
+            "description": "Project name"
+          },
+          "serviceName": {
+            "type": "string",
+            "description": "Service name"
+          }
+        },
+        "required": [
+          "projectName",
+          "serviceName"
+        ],
+        "additionalProperties": false
+      },
+      "progressive": {
+        "capabilityId": "ep.service_stats",
+        "category": "monitoring",
+        "safetyClass": "safe",
+        "keywords": [
+          "service",
+          "stats",
+          "cpu",
+          "memory",
+          "usage"
+        ],
+        "aliases": [],
+        "discoverable": true
+      }
+    },
+    {
+      "toolName": "storage_stats",
+      "description": "Get storage usage breakdown",
+      "operationKind": "read",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false
+      },
+      "progressive": {
+        "capabilityId": "ep.storage_stats",
+        "category": "monitoring",
+        "safetyClass": "safe",
+        "keywords": [
+          "storage",
+          "stats",
+          "disk",
+          "usage"
+        ],
+        "aliases": [],
+        "discoverable": true
+      }
+    }
+  ],
+  "progressiveCapabilities": [
+    {
+      "id": "ep.list_projects",
+      "toolName": "list_projects",
+      "mode": "read",
+      "category": "projects",
+      "safetyClass": "safe",
+      "discoverable": true,
+      "aliases": [
+        "ep.list_projects_services"
+      ],
+      "argsSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false
+      },
+      "example": {}
+    },
+    {
+      "id": "ep.create_project",
+      "toolName": "create_project",
+      "mode": "write_guarded",
+      "category": "projects",
+      "safetyClass": "guarded",
+      "discoverable": true,
+      "aliases": [],
+      "argsSchema": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Project name (lowercase, no spaces)"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "additionalProperties": false
+      },
+      "example": {
+        "name": "demo"
+      }
+    },
+    {
+      "id": "ep.destroy_project",
+      "toolName": "destroy_project",
+      "mode": "write_guarded",
+      "category": "projects",
+      "safetyClass": "dangerous",
+      "discoverable": true,
+      "aliases": [],
+      "argsSchema": {
+        "type": "object",
+        "properties": {
+          "projectName": {
+            "type": "string",
+            "description": "Project name"
+          }
+        },
+        "required": [
+          "projectName"
+        ],
+        "additionalProperties": false
+      },
+      "example": {
+        "projectName": "demo"
+      }
+    },
+    {
+      "id": "ep.inspect_project",
+      "toolName": "inspect_project",
+      "mode": "read",
+      "category": "projects",
+      "safetyClass": "safe",
+      "discoverable": true,
+      "aliases": [],
+      "argsSchema": {
+        "type": "object",
+        "properties": {
+          "projectName": {
+            "type": "string",
+            "description": "Project name"
+          }
+        },
+        "required": [
+          "projectName"
+        ],
+        "additionalProperties": false
+      },
+      "example": {
+        "projectName": "demo"
+      }
+    },
+    {
+      "id": "ep.create_app",
+      "toolName": "create_app",
+      "mode": "write_guarded",
+      "category": "apps",
+      "safetyClass": "guarded",
+      "discoverable": true,
+      "aliases": [],
+      "argsSchema": {
+        "type": "object",
+        "properties": {
+          "projectName": {
+            "type": "string",
+            "description": "Project name"
+          },
+          "serviceName": {
+            "type": "string",
+            "description": "Service name"
+          }
+        },
+        "required": [
+          "projectName",
+          "serviceName"
+        ],
+        "additionalProperties": false
+      },
+      "example": {
+        "projectName": "sample-project",
+        "serviceName": "hello-app"
+      }
+    },
+    {
+      "id": "ep.inspect_app",
+      "toolName": "inspect_app",
+      "mode": "read",
+      "category": "apps",
+      "safetyClass": "safe",
+      "discoverable": true,
+      "aliases": [],
+      "argsSchema": {
+        "type": "object",
+        "properties": {
+          "projectName": {
+            "type": "string",
+            "description": "Project name"
+          },
+          "serviceName": {
+            "type": "string",
+            "description": "Service name"
+          }
+        },
+        "required": [
+          "projectName",
+          "serviceName"
+        ],
+        "additionalProperties": false
+      },
+      "example": {
+        "projectName": "sample-project",
+        "serviceName": "hello-app"
+      }
+    },
+    {
+      "id": "ep.deploy_app",
+      "toolName": "deploy_app",
+      "mode": "write_guarded",
+      "category": "apps",
+      "safetyClass": "guarded",
+      "discoverable": true,
+      "aliases": [],
+      "argsSchema": {
+        "type": "object",
+        "properties": {
+          "projectName": {
+            "type": "string",
+            "description": "Project name"
+          },
+          "serviceName": {
+            "type": "string",
+            "description": "Service name"
+          }
+        },
+        "required": [
+          "projectName",
+          "serviceName"
+        ],
+        "additionalProperties": false
+      },
+      "example": {
+        "projectName": "sample-project",
+        "serviceName": "hello-app"
+      }
+    },
+    {
+      "id": "ep.start_app",
+      "toolName": "start_app",
+      "mode": "write_guarded",
+      "category": "apps",
+      "safetyClass": "guarded",
+      "discoverable": true,
+      "aliases": [],
+      "argsSchema": {
+        "type": "object",
+        "properties": {
+          "projectName": {
+            "type": "string",
+            "description": "Project name"
+          },
+          "serviceName": {
+            "type": "string",
+            "description": "Service name"
+          }
+        },
+        "required": [
+          "projectName",
+          "serviceName"
+        ],
+        "additionalProperties": false
+      },
+      "example": {
+        "projectName": "sample-project",
+        "serviceName": "hello-app"
+      }
+    },
+    {
+      "id": "ep.stop_app",
+      "toolName": "stop_app",
+      "mode": "write_guarded",
+      "category": "apps",
+      "safetyClass": "guarded",
+      "discoverable": true,
+      "aliases": [],
+      "argsSchema": {
+        "type": "object",
+        "properties": {
+          "projectName": {
+            "type": "string",
+            "description": "Project name"
+          },
+          "serviceName": {
+            "type": "string",
+            "description": "Service name"
+          }
+        },
+        "required": [
+          "projectName",
+          "serviceName"
+        ],
+        "additionalProperties": false
+      },
+      "example": {
+        "projectName": "sample-project",
+        "serviceName": "hello-app"
+      }
+    },
+    {
+      "id": "ep.restart_app",
+      "toolName": "restart_app",
+      "mode": "write_guarded",
+      "category": "apps",
+      "safetyClass": "guarded",
+      "discoverable": true,
+      "aliases": [],
+      "argsSchema": {
+        "type": "object",
+        "properties": {
+          "projectName": {
+            "type": "string",
+            "description": "Project name"
+          },
+          "serviceName": {
+            "type": "string",
+            "description": "Service name"
+          }
+        },
+        "required": [
+          "projectName",
+          "serviceName"
+        ],
+        "additionalProperties": false
+      },
+      "example": {
+        "projectName": "sample-project",
+        "serviceName": "hello-app"
+      }
+    },
+    {
+      "id": "ep.destroy_app",
+      "toolName": "destroy_app",
+      "mode": "write_guarded",
+      "category": "apps",
+      "safetyClass": "dangerous",
+      "discoverable": true,
+      "aliases": [],
+      "argsSchema": {
+        "type": "object",
+        "properties": {
+          "projectName": {
+            "type": "string",
+            "description": "Project name"
+          },
+          "serviceName": {
+            "type": "string",
+            "description": "Service name"
+          }
+        },
+        "required": [
+          "projectName",
+          "serviceName"
+        ],
+        "additionalProperties": false
+      },
+      "example": {
+        "projectName": "sample-project",
+        "serviceName": "hello-app"
+      }
+    },
+    {
+      "id": "ep.set_app_source_image",
+      "toolName": "set_app_source_image",
+      "mode": "write_guarded",
+      "category": "apps",
+      "safetyClass": "guarded",
+      "discoverable": true,
+      "aliases": [],
+      "argsSchema": {
+        "type": "object",
+        "properties": {
+          "projectName": {
+            "type": "string",
+            "description": "Project name"
+          },
+          "serviceName": {
+            "type": "string",
+            "description": "Service name"
+          },
+          "image": {
+            "type": "string",
+            "description": "Docker image (e.g. nginx:latest)"
+          }
+        },
+        "required": [
+          "projectName",
+          "serviceName",
+          "image"
+        ],
+        "additionalProperties": false
+      },
+      "example": {
+        "projectName": "sample-project",
+        "serviceName": "hello-app",
+        "image": "nginx:latest"
+      }
+    },
+    {
+      "id": "ep.set_app_source_github",
+      "toolName": "set_app_source_github",
+      "mode": "write_guarded",
+      "category": "apps",
+      "safetyClass": "guarded",
+      "discoverable": true,
+      "aliases": [],
+      "argsSchema": {
+        "type": "object",
+        "properties": {
+          "projectName": {
+            "type": "string",
+            "description": "Project name"
+          },
+          "serviceName": {
+            "type": "string",
+            "description": "Service name"
+          },
+          "owner": {
+            "type": "string",
+            "description": "GitHub owner"
+          },
+          "repo": {
+            "type": "string",
+            "description": "GitHub repository"
+          },
+          "branch": {
+            "type": "string",
+            "description": "Git branch"
+          },
+          "path": {
+            "type": "string",
+            "description": "Subdirectory"
+          }
+        },
+        "required": [
+          "projectName",
+          "serviceName",
+          "owner",
+          "repo"
+        ],
+        "additionalProperties": false
+      },
+      "example": {
+        "projectName": "sample-project",
+        "serviceName": "hello-app",
+        "owner": "dray-supadev",
+        "repo": "easypanel-mcp"
+      }
+    },
+    {
+      "id": "ep.set_app_env",
+      "toolName": "set_app_env",
+      "mode": "write_guarded",
+      "category": "apps",
+      "safetyClass": "guarded",
+      "discoverable": true,
+      "aliases": [],
+      "argsSchema": {
+        "type": "object",
+        "properties": {
+          "projectName": {
+            "type": "string",
+            "description": "Project name"
+          },
+          "serviceName": {
+            "type": "string",
+            "description": "Service name"
+          },
+          "env": {
+            "type": "string",
+            "description": "KEY=VALUE lines"
+          }
+        },
+        "required": [
+          "projectName",
+          "serviceName",
+          "env"
+        ],
+        "additionalProperties": false
+      },
+      "example": {
+        "projectName": "sample-project",
+        "serviceName": "hello-app",
+        "env": "NODE_ENV=production"
+      }
+    },
+    {
+      "id": "ep.set_app_resources",
+      "toolName": "set_app_resources",
+      "mode": "write_guarded",
+      "category": "apps",
+      "safetyClass": "guarded",
+      "discoverable": true,
+      "aliases": [],
+      "argsSchema": {
+        "type": "object",
+        "properties": {
+          "projectName": {
+            "type": "string",
+            "description": "Project name"
+          },
+          "serviceName": {
+            "type": "string",
+            "description": "Service name"
+          },
+          "memoryLimit": {
+            "type": "number",
+            "description": "Memory limit MB"
+          },
+          "memoryReservation": {
+            "type": "number",
+            "description": "Memory reservation MB"
+          },
+          "cpuLimit": {
+            "type": "number",
+            "description": "CPU limit (1 = 1 core)"
+          },
+          "cpuReservation": {
+            "type": "number",
+            "description": "CPU reservation"
+          }
+        },
+        "required": [
+          "projectName",
+          "serviceName"
+        ],
+        "additionalProperties": false
+      },
+      "example": {
+        "projectName": "sample-project",
+        "serviceName": "hello-app",
+        "memoryLimit": 512,
+        "cpuLimit": 1
+      }
+    },
+    {
+      "id": "ep.create_compose",
+      "toolName": "create_compose",
+      "mode": "write_guarded",
+      "category": "compose",
+      "safetyClass": "guarded",
+      "discoverable": true,
+      "aliases": [],
+      "argsSchema": {
+        "type": "object",
+        "properties": {
+          "projectName": {
+            "type": "string",
+            "description": "Project name"
+          },
+          "serviceName": {
+            "type": "string",
+            "description": "Service name"
+          }
+        },
+        "required": [
+          "projectName",
+          "serviceName"
+        ],
+        "additionalProperties": false
+      },
+      "example": {
+        "projectName": "sample-project",
+        "serviceName": "compose-stack"
+      }
+    },
+    {
+      "id": "ep.inspect_compose",
+      "toolName": "inspect_compose",
+      "mode": "read",
+      "category": "compose",
+      "safetyClass": "safe",
+      "discoverable": true,
+      "aliases": [],
+      "argsSchema": {
+        "type": "object",
+        "properties": {
+          "projectName": {
+            "type": "string",
+            "description": "Project name"
+          },
+          "serviceName": {
+            "type": "string",
+            "description": "Service name"
+          }
+        },
+        "required": [
+          "projectName",
+          "serviceName"
+        ],
+        "additionalProperties": false
+      },
+      "example": {
+        "projectName": "sample-project",
+        "serviceName": "compose-stack"
+      }
+    },
+    {
+      "id": "ep.deploy_compose",
+      "toolName": "deploy_compose",
+      "mode": "write_guarded",
+      "category": "compose",
+      "safetyClass": "guarded",
+      "discoverable": true,
+      "aliases": [],
+      "argsSchema": {
+        "type": "object",
+        "properties": {
+          "projectName": {
+            "type": "string",
+            "description": "Project name"
+          },
+          "serviceName": {
+            "type": "string",
+            "description": "Service name"
+          }
+        },
+        "required": [
+          "projectName",
+          "serviceName"
+        ],
+        "additionalProperties": false
+      },
+      "example": {
+        "projectName": "sample-project",
+        "serviceName": "compose-stack"
+      }
+    },
+    {
+      "id": "ep.cleanup_docker",
+      "toolName": "cleanup_docker",
+      "mode": "write_guarded",
+      "category": "system",
+      "safetyClass": "guarded",
+      "discoverable": true,
+      "aliases": [],
+      "argsSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false
+      },
+      "example": {}
+    },
+    {
+      "id": "ep.system_prune",
+      "toolName": "system_prune",
+      "mode": "write_guarded",
+      "category": "system",
+      "safetyClass": "dangerous",
+      "discoverable": true,
+      "aliases": [],
+      "argsSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false
+      },
+      "example": {}
+    },
+    {
+      "id": "ep.restart_panel",
+      "toolName": "restart_panel",
+      "mode": "write_guarded",
+      "category": "system",
+      "safetyClass": "dangerous",
+      "discoverable": true,
+      "aliases": [],
+      "argsSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false
+      },
+      "example": {}
+    },
+    {
+      "id": "ep.reboot_server",
+      "toolName": "reboot_server",
+      "mode": "write_guarded",
+      "category": "system",
+      "safetyClass": "dangerous",
+      "discoverable": true,
+      "aliases": [],
+      "argsSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false
+      },
+      "example": {}
+    },
+    {
+      "id": "ep.list_users",
+      "toolName": "list_users",
+      "mode": "read",
+      "category": "admin",
+      "safetyClass": "safe",
+      "discoverable": true,
+      "aliases": [],
+      "argsSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false
+      },
+      "example": {}
+    },
+    {
+      "id": "ep.list_certificates",
+      "toolName": "list_certificates",
+      "mode": "read",
+      "category": "admin",
+      "safetyClass": "safe",
+      "discoverable": true,
+      "aliases": [],
+      "argsSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false
+      },
+      "example": {}
+    },
+    {
+      "id": "ep.list_nodes",
+      "toolName": "list_nodes",
+      "mode": "read",
+      "category": "admin",
+      "safetyClass": "safe",
+      "discoverable": true,
+      "aliases": [],
+      "argsSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false
+      },
+      "example": {}
+    },
+    {
+      "id": "ep.deploy_template",
+      "toolName": "deploy_template",
+      "mode": "write_guarded",
+      "category": "templates",
+      "safetyClass": "dangerous",
+      "discoverable": true,
+      "aliases": [],
+      "argsSchema": {
+        "type": "object",
+        "properties": {
+          "projectName": {
+            "type": "string",
+            "description": "Project name"
+          },
+          "schema": {
+            "type": "object",
+            "additionalProperties": true,
+            "description": "Template schema object"
+          }
+        },
+        "required": [
+          "projectName",
+          "schema"
+        ],
+        "additionalProperties": false
+      },
+      "example": {
+        "projectName": "sample-project",
+        "schema": {
+          "services": []
+        }
+      }
+    },
+    {
+      "id": "ep.list_actions",
+      "toolName": "list_actions",
+      "mode": "read",
+      "category": "actions",
+      "safetyClass": "safe",
+      "discoverable": true,
+      "aliases": [],
+      "argsSchema": {
+        "type": "object",
+        "properties": {
+          "projectName": {
+            "type": "string",
+            "description": "Project name"
+          },
+          "serviceName": {
+            "type": "string",
+            "description": "Service name"
+          },
+          "limit": {
+            "type": "number",
+            "description": "Number of actions to return (default 8)"
+          }
+        },
+        "additionalProperties": false
+      },
+      "example": {
+        "projectName": "sample-project",
+        "limit": 8
+      }
+    },
+    {
+      "id": "ep.get_action_log",
+      "toolName": "get_action_log",
+      "mode": "read",
+      "category": "actions",
+      "safetyClass": "safe",
+      "discoverable": true,
+      "aliases": [],
+      "argsSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Action ID from list_actions"
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "additionalProperties": false
+      },
+      "example": {
+        "id": "action-123"
+      }
+    },
+    {
+      "id": "ep.create_database",
+      "toolName": "create_database",
+      "mode": "write_guarded",
+      "category": "databases",
+      "safetyClass": "guarded",
+      "discoverable": true,
+      "aliases": [],
+      "argsSchema": {
+        "type": "object",
+        "properties": {
+          "projectName": {
+            "type": "string",
+            "description": "Project name"
+          },
+          "serviceName": {
+            "type": "string",
+            "description": "Service name"
+          },
+          "engine": {
+            "type": "string",
+            "enum": [
+              "postgres",
+              "mysql",
+              "mariadb",
+              "mongo",
+              "redis"
+            ],
+            "description": "Database engine"
+          },
+          "password": {
+            "type": "string",
+            "description": "Password (auto-generated if empty)"
+          }
+        },
+        "required": [
+          "projectName",
+          "serviceName",
+          "engine"
+        ],
+        "additionalProperties": false
+      },
+      "example": {
+        "projectName": "sample-project",
+        "serviceName": "postgres-main",
+        "engine": "postgres"
+      }
+    },
+    {
+      "id": "ep.inspect_database",
+      "toolName": "inspect_database",
+      "mode": "read",
+      "category": "databases",
+      "safetyClass": "safe",
+      "discoverable": true,
+      "aliases": [],
+      "argsSchema": {
+        "type": "object",
+        "properties": {
+          "projectName": {
+            "type": "string",
+            "description": "Project name"
+          },
+          "serviceName": {
+            "type": "string",
+            "description": "Service name"
+          },
+          "engine": {
+            "type": "string",
+            "enum": [
+              "postgres",
+              "mysql",
+              "mariadb",
+              "mongo",
+              "redis"
+            ],
+            "description": "Database engine"
+          }
+        },
+        "required": [
+          "projectName",
+          "serviceName",
+          "engine"
+        ],
+        "additionalProperties": false
+      },
+      "example": {
+        "projectName": "sample-project",
+        "serviceName": "postgres-main",
+        "engine": "postgres"
+      }
+    },
+    {
+      "id": "ep.destroy_database",
+      "toolName": "destroy_database",
+      "mode": "write_guarded",
+      "category": "databases",
+      "safetyClass": "dangerous",
+      "discoverable": true,
+      "aliases": [],
+      "argsSchema": {
+        "type": "object",
+        "properties": {
+          "projectName": {
+            "type": "string",
+            "description": "Project name"
+          },
+          "serviceName": {
+            "type": "string",
+            "description": "Service name"
+          },
+          "engine": {
+            "type": "string",
+            "enum": [
+              "postgres",
+              "mysql",
+              "mariadb",
+              "mongo",
+              "redis"
+            ],
+            "description": "Database engine"
+          }
+        },
+        "required": [
+          "projectName",
+          "serviceName",
+          "engine"
+        ],
+        "additionalProperties": false
+      },
+      "example": {
+        "projectName": "sample-project",
+        "serviceName": "postgres-main",
+        "engine": "postgres"
+      }
+    },
+    {
+      "id": "ep.list_domains",
+      "toolName": "list_domains",
+      "mode": "read",
+      "category": "domains",
+      "safetyClass": "safe",
+      "discoverable": true,
+      "aliases": [],
+      "argsSchema": {
+        "type": "object",
+        "properties": {
+          "projectName": {
+            "type": "string",
+            "description": "Project name"
+          },
+          "serviceName": {
+            "type": "string",
+            "description": "Service name"
+          }
+        },
+        "required": [
+          "projectName",
+          "serviceName"
+        ],
+        "additionalProperties": false
+      },
+      "example": {
+        "projectName": "sample-project",
+        "serviceName": "hello-app"
+      }
+    },
+    {
+      "id": "ep.create_domain",
+      "toolName": "create_domain",
+      "mode": "write_guarded",
+      "category": "domains",
+      "safetyClass": "guarded",
+      "discoverable": true,
+      "aliases": [],
+      "argsSchema": {
+        "type": "object",
+        "properties": {
+          "projectName": {
+            "type": "string",
+            "description": "Project name"
+          },
+          "serviceName": {
+            "type": "string",
+            "description": "Service name"
+          },
+          "host": {
+            "type": "string",
+            "description": "Domain (e.g. app.example.com)"
+          },
+          "https": {
+            "type": "boolean",
+            "description": "Enable HTTPS (default true)"
+          },
+          "port": {
+            "type": "number",
+            "description": "Container port"
+          }
+        },
+        "required": [
+          "projectName",
+          "serviceName",
+          "host"
+        ],
+        "additionalProperties": false
+      },
+      "example": {
+        "projectName": "sample-project",
+        "serviceName": "hello-app",
+        "host": "app.example.com",
+        "https": true
+      }
+    },
+    {
+      "id": "ep.delete_domain",
+      "toolName": "delete_domain",
+      "mode": "write_guarded",
+      "category": "domains",
+      "safetyClass": "guarded",
+      "discoverable": true,
+      "aliases": [],
+      "argsSchema": {
+        "type": "object",
+        "properties": {
+          "projectName": {
+            "type": "string",
+            "description": "Project name"
+          },
+          "serviceName": {
+            "type": "string",
+            "description": "Service name"
+          },
+          "domainId": {
+            "type": "string",
+            "description": "Domain ID"
+          }
+        },
+        "required": [
+          "projectName",
+          "serviceName",
+          "domainId"
+        ],
+        "additionalProperties": false
+      },
+      "example": {
+        "projectName": "sample-project",
+        "serviceName": "hello-app",
+        "domainId": "domain-123"
+      }
+    },
+    {
+      "id": "ep.create_port",
+      "toolName": "create_port",
+      "mode": "write_guarded",
+      "category": "ports",
+      "safetyClass": "guarded",
+      "discoverable": true,
+      "aliases": [],
+      "argsSchema": {
+        "type": "object",
+        "properties": {
+          "projectName": {
+            "type": "string",
+            "description": "Project name"
+          },
+          "serviceName": {
+            "type": "string",
+            "description": "Service name"
+          },
+          "publishedPort": {
+            "type": "number",
+            "description": "External port"
+          },
+          "targetPort": {
+            "type": "number",
+            "description": "Container port"
+          },
+          "protocol": {
+            "type": "string",
+            "enum": [
+              "tcp",
+              "udp"
+            ],
+            "description": "Protocol"
+          }
+        },
+        "required": [
+          "projectName",
+          "serviceName",
+          "publishedPort",
+          "targetPort"
+        ],
+        "additionalProperties": false
+      },
+      "example": {
+        "projectName": "sample-project",
+        "serviceName": "hello-app",
+        "publishedPort": 8080,
+        "targetPort": 3000
+      }
+    },
+    {
+      "id": "ep.list_ports",
+      "toolName": "list_ports",
+      "mode": "read",
+      "category": "ports",
+      "safetyClass": "safe",
+      "discoverable": true,
+      "aliases": [],
+      "argsSchema": {
+        "type": "object",
+        "properties": {
+          "projectName": {
+            "type": "string",
+            "description": "Project name"
+          },
+          "serviceName": {
+            "type": "string",
+            "description": "Service name"
+          }
+        },
+        "required": [
+          "projectName",
+          "serviceName"
+        ],
+        "additionalProperties": false
+      },
+      "example": {
+        "projectName": "sample-project",
+        "serviceName": "hello-app"
+      }
+    },
+    {
+      "id": "ep.create_mount",
+      "toolName": "create_mount",
+      "mode": "write_guarded",
+      "category": "mounts",
+      "safetyClass": "guarded",
+      "discoverable": true,
+      "aliases": [],
+      "argsSchema": {
+        "type": "object",
+        "properties": {
+          "projectName": {
+            "type": "string",
+            "description": "Project name"
+          },
+          "serviceName": {
+            "type": "string",
+            "description": "Service name"
+          },
+          "mountPath": {
+            "type": "string",
+            "description": "Path inside container"
+          },
+          "name": {
+            "type": "string",
+            "description": "Volume name"
+          },
+          "hostPath": {
+            "type": "string",
+            "description": "Host path for bind mount"
+          }
+        },
+        "required": [
+          "projectName",
+          "serviceName",
+          "mountPath"
+        ],
+        "additionalProperties": false
+      },
+      "example": {
+        "projectName": "sample-project",
+        "serviceName": "hello-app",
+        "mountPath": "/data",
+        "name": "hello-data"
+      }
+    },
+    {
+      "id": "ep.list_mounts",
+      "toolName": "list_mounts",
+      "mode": "read",
+      "category": "mounts",
+      "safetyClass": "safe",
+      "discoverable": true,
+      "aliases": [],
+      "argsSchema": {
+        "type": "object",
+        "properties": {
+          "projectName": {
+            "type": "string",
+            "description": "Project name"
+          },
+          "serviceName": {
+            "type": "string",
+            "description": "Service name"
+          }
+        },
+        "required": [
+          "projectName",
+          "serviceName"
+        ],
+        "additionalProperties": false
+      },
+      "example": {
+        "projectName": "sample-project",
+        "serviceName": "hello-app"
+      }
+    },
+    {
+      "id": "ep.system_stats",
+      "toolName": "system_stats",
+      "mode": "read",
+      "category": "monitoring",
+      "safetyClass": "safe",
+      "discoverable": true,
+      "aliases": [],
+      "argsSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false
+      },
+      "example": {}
+    },
+    {
+      "id": "ep.service_stats",
+      "toolName": "service_stats",
+      "mode": "read",
+      "category": "monitoring",
+      "safetyClass": "safe",
+      "discoverable": true,
+      "aliases": [],
+      "argsSchema": {
+        "type": "object",
+        "properties": {
+          "projectName": {
+            "type": "string",
+            "description": "Project name"
+          },
+          "serviceName": {
+            "type": "string",
+            "description": "Service name"
+          }
+        },
+        "required": [
+          "projectName",
+          "serviceName"
+        ],
+        "additionalProperties": false
+      },
+      "example": {
+        "projectName": "sample-project",
+        "serviceName": "hello-app"
+      }
+    },
+    {
+      "id": "ep.storage_stats",
+      "toolName": "storage_stats",
+      "mode": "read",
+      "category": "monitoring",
+      "safetyClass": "safe",
+      "discoverable": true,
+      "aliases": [],
+      "argsSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false
+      },
+      "example": {}
+    },
+    {
+      "id": "ep.list_projects_services",
+      "aliasOf": "ep.list_projects",
+      "toolName": "list_projects",
+      "mode": "read",
+      "category": "projects",
+      "safetyClass": "safe",
+      "discoverable": false,
+      "aliases": [],
+      "argsSchema": {
+        "type": "object",
+        "properties": {
+          "projectName": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "example": {
+        "projectName": "sample-project"
+      }
+    },
+    {
+      "id": "ep.trpc_raw_read",
+      "toolName": "trpc_raw",
+      "mode": "read",
+      "category": "escape-hatch",
+      "safetyClass": "guarded",
+      "discoverable": true,
+      "aliases": [],
+      "argsSchema": {
+        "type": "object",
+        "required": [
+          "procedure"
+        ],
+        "properties": {
+          "procedure": {
+            "type": "string",
+            "description": "Full tRPC procedure name"
+          },
+          "input": {
+            "type": "object",
+            "description": "Input object",
+            "additionalProperties": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "example": {
+        "procedure": "wordpress.inspectService",
+        "input": {
+          "projectName": "sample-project",
+          "serviceName": "blog"
+        }
+      }
+    },
+    {
+      "id": "ep.trpc_raw_write",
+      "toolName": "trpc_raw",
+      "mode": "write_guarded",
+      "category": "escape-hatch",
+      "safetyClass": "dangerous",
+      "discoverable": true,
+      "aliases": [],
+      "argsSchema": {
+        "type": "object",
+        "required": [
+          "procedure"
+        ],
+        "properties": {
+          "procedure": {
+            "type": "string",
+            "description": "Full tRPC procedure name"
+          },
+          "input": {
+            "type": "object",
+            "description": "Input object",
+            "additionalProperties": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "example": {
+        "procedure": "box.createService",
+        "input": {
+          "projectName": "sample-project",
+          "serviceName": "devbox"
+        }
+      }
+    }
+  ]
+}

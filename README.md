@@ -2,7 +2,7 @@
 
 MCP server for [EasyPanel](https://easypanel.io) — manage your server, projects, services, databases, and domains through any MCP-compatible AI agent (Claude, Cursor, etc.).
 
-**40 curated tools** + raw tRPC access to all **347 EasyPanel API procedures**.
+**42 direct tools** or **4 progressive wrapper tools** backed by **43 discoverable capabilities**, plus raw tRPC access to all **347 EasyPanel API procedures**.
 
 ## 🚀 Quick Setup (Deploy on EasyPanel)
 
@@ -32,12 +32,15 @@ The response contains `"token":"xxx"` — that's your API token.
    EASYPANEL_URL=http://your-easypanel-host:3000
    EASYPANEL_TOKEN=your-api-token
    EASYPANEL_MCP_MODE=http
+   MCP_PROFILE=progressive
    MCP_API_KEY=your-secret-key
    MCP_ACCESS_MODE=readonly
    PORT=3000
    ```
    
    > **Important:** Use `http://your-easypanel-host:3000` (internal Docker network) when deploying on the same EasyPanel instance. External URLs won't work from inside the container.
+   
+   > **`MCP_PROFILE`**: `direct` exposes all MCP tools directly. `progressive` exposes only `ep_discover`, `ep_capability_schema`, `ep_execute_read`, and `ep_execute_write_guarded`.
    
    > **`MCP_ACCESS_MODE`**: Set to `readonly` to block all write operations (create, deploy, destroy, restart). Set to `full` when you're ready to allow mutations.
 
@@ -102,7 +105,27 @@ It documents:
 - how to keep deployable stability on `main`,
 - and how to deploy the fork source in EasyPanel.
 
-## 🔧 Available Tools (40)
+## Profiles
+
+### Direct profile
+
+- Default when `MCP_PROFILE` is omitted
+- Exposes all **42** direct MCP tools
+- Best when the client can safely handle the full tool surface
+
+### Progressive profile
+
+- Exposes exactly **4** tools: `ep_discover`, `ep_capability_schema`, `ep_execute_read`, `ep_execute_write_guarded`
+- Internally covers **43** discoverable capabilities generated from the same typed catalog as the direct profile
+- Keeps write operations guarded and makes the catalog versioned in this fork instead of n8n
+
+The generated catalog snapshot is committed in [`catalog-manifest.json`](./catalog-manifest.json) and can be refreshed with:
+
+```bash
+npm run generate:manifest
+```
+
+## 🔧 Direct Tools (42)
 
 ### Projects
 `list_projects` · `create_project` · `destroy_project` · `inspect_project`
@@ -145,6 +168,7 @@ It documents:
 | `EASYPANEL_URL` | ✅ | Your EasyPanel URL |
 | `EASYPANEL_TOKEN` | ✅ | API token from login |
 | `EASYPANEL_MCP_MODE` | For HTTP | Set to `http` for remote deployment |
+| `MCP_PROFILE` | No | `direct` (default) or `progressive` |
 | `MCP_API_KEY` | Recommended | Protects the MCP endpoint |
 | `MCP_ACCESS_MODE` | No | `full` (default) or `readonly` — blocks all mutations |
 | `PORT` | No | HTTP port (default: 3000) |
@@ -185,6 +209,13 @@ Your user now has an `"apiToken"` field — that's the permanent token. Set it a
 ## How It Works
 
 EasyPanel exposes a tRPC API at `/api/trpc/`. This MCP server was built by reverse-engineering EasyPanel's frontend to extract all 347 procedure names across 43 namespaces, then mapping the most useful ones to typed MCP tools.
+
+In this fork, both the direct and progressive profiles are generated from the same typed registry. That registry drives:
+
+- direct MCP tool registration
+- progressive capability discovery/schema/execution
+- `/health` counts
+- `catalog-manifest.json`
 
 ## Disclaimer
 

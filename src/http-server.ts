@@ -23,7 +23,11 @@ function checkAuth(req: import("node:http").IncomingMessage, res: import("node:h
   return false;
 }
 
-export async function startHttpServer(createMcpServer: () => McpServer, port: number) {
+export async function startHttpServer(
+  createMcpServer: () => McpServer,
+  port: number,
+  getHealth: () => Record<string, unknown>,
+) {
   const sessions = new Map<string, { transport: StreamableHTTPServerTransport; server: McpServer }>();
 
   const httpServer = createServer(async (req, res) => {
@@ -42,7 +46,7 @@ export async function startHttpServer(createMcpServer: () => McpServer, port: nu
     // Health check
     if (req.url === "/health") {
       res.writeHead(200, { "Content-Type": "application/json" });
-      res.end(JSON.stringify({ status: "ok", tools: 40, auth: !!API_KEY, sessions: sessions.size }));
+      res.end(JSON.stringify({ status: "ok", auth: !!API_KEY, sessions: sessions.size, ...getHealth() }));
       return;
     }
 
