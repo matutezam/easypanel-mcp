@@ -15,6 +15,7 @@
     "dev": "tsx src/index.ts",
     "test": "node --import tsx --test test/**/*.test.ts",
     "generate:manifest": "tsx scripts/generate-catalog-manifest.ts",
+    "audit:openapi": "tsx scripts/audit-openapi-compat.ts",
     "prepublishOnly": "npm run build"
   },
   "keywords": ["mcp", "easypanel", "server", "hosting", "ai", "claude", "model-context-protocol"],

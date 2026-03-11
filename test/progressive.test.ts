@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { capabilitySpecs, directToolSpecs } from "../src/catalog.js";
+import { capabilitySpecs, catalogProcedureNames, directToolSpecs } from "../src/catalog.js";
 import {
   discoverCapabilities,
   executeReadCapability,
@@ -53,6 +53,21 @@ test("capability ids are unique", () => {
   assert.equal(new Set(ids).size, ids.length);
 });
 
+test("catalog procedure registry matches the EasyPanel 2.26.x service namespace layout", () => {
+  assert.equal(new Set(catalogProcedureNames).size, catalogProcedureNames.length);
+  assert.ok(catalogProcedureNames.includes("services.common.getNotes"));
+  assert.ok(catalogProcedureNames.includes("services.app.inspectService"));
+  assert.ok(catalogProcedureNames.includes("services.box.createService"));
+  assert.ok(catalogProcedureNames.includes("services.compose.createService"));
+  assert.ok(catalogProcedureNames.includes("services.postgres.destroyService"));
+  assert.ok(catalogProcedureNames.includes("services.wordpress.inspectService"));
+  assert.ok(!catalogProcedureNames.includes("app.inspectService"));
+  assert.ok(!catalogProcedureNames.includes("box.createService"));
+  assert.ok(!catalogProcedureNames.includes("compose.createService"));
+  assert.ok(!catalogProcedureNames.includes("postgres.inspectService"));
+  assert.ok(!catalogProcedureNames.includes("wordpress.inspectService"));
+});
+
 test("progressive profile exposes exactly four external tools", () => {
   assert.equal(progressiveExternalTools.length, 4);
   assert.deepEqual(progressiveExternalTools, [
@@ -81,6 +96,14 @@ test("discover write intent ranks relevant service creation and keeps dangerous 
   const appIndex = ids.findIndex((id) => id === "ep.create_app");
   assert.ok(appIndex !== -1);
   assert.ok(dangerousIndex === -1 || dangerousIndex > appIndex);
+});
+
+test("discover finds wordpress and common service operations from intent", () => {
+  const wordpress = discoverCapabilities("crear wordpress", "write");
+  assert.ok(wordpress.capabilities.some((capability) => capability.id === "ep.create_wordpress"));
+
+  const rename = discoverCapabilities("renombrar servicio", "write");
+  assert.ok(rename.capabilities.some((capability) => capability.id === "ep.rename_service"));
 });
 
 test("discover raw intent surfaces trpc escape hatch", () => {
@@ -126,18 +149,71 @@ test("approved write capability dispatches to the direct handler", async () => {
   assert.deepEqual(calls, [{ kind: "mutate", procedure: "projects.createProject", input: { name: "demo" } }]);
 });
 
-test("trpc raw read forces query mode", async () => {
+test("app creation dispatches to the services.app namespace", async () => {
+  const { ctx, calls } = createFakeContext();
+  const result = await executeWriteCapability(
+    ctx,
+    "ep.create_app",
+    "{\"projectName\":\"sample-project\",\"serviceName\":\"hello-app\"}",
+    true,
+  );
+  assert.equal(result.ok, true);
+  assert.deepEqual(calls, [
+    {
+      kind: "mutate",
+      procedure: "services.app.createService",
+      input: { projectName: "sample-project", serviceName: "hello-app" },
+    },
+  ]);
+});
+
+test("database inspection dispatches to the services.<engine> namespace", async () => {
   const { ctx, calls } = createFakeContext();
   const result = await executeReadCapability(
     ctx,
-    "ep.trpc_raw_read",
-    "{\"procedure\":\"wordpress.inspectService\",\"input\":{\"projectName\":\"sample-project\",\"serviceName\":\"blog\"}}",
+    "ep.inspect_database",
+    "{\"projectName\":\"sample-project\",\"serviceName\":\"postgres\",\"engine\":\"postgres\"}",
   );
   assert.equal(result.ok, true);
   assert.deepEqual(calls, [
     {
       kind: "query",
-      procedure: "wordpress.inspectService",
+      procedure: "services.postgres.inspectService",
+      input: { projectName: "sample-project", serviceName: "postgres" },
+    },
+  ]);
+});
+
+test("wordpress creation dispatches to the services.wordpress namespace", async () => {
+  const { ctx, calls } = createFakeContext();
+  const result = await executeWriteCapability(
+    ctx,
+    "ep.create_wordpress",
+    "{\"projectName\":\"sample-project\",\"serviceName\":\"wp-blog\"}",
+    true,
+  );
+  assert.equal(result.ok, true);
+  assert.deepEqual(calls, [
+    {
+      kind: "mutate",
+      procedure: "services.wordpress.createService",
+      input: { projectName: "sample-project", serviceName: "wp-blog" },
+    },
+  ]);
+});
+
+test("trpc raw read forces query mode", async () => {
+  const { ctx, calls } = createFakeContext();
+  const result = await executeReadCapability(
+    ctx,
+    "ep.trpc_raw_read",
+    "{\"procedure\":\"services.wordpress.inspectService\",\"input\":{\"projectName\":\"sample-project\",\"serviceName\":\"blog\"}}",
+  );
+  assert.equal(result.ok, true);
+  assert.deepEqual(calls, [
+    {
+      kind: "query",
+      procedure: "services.wordpress.inspectService",
       input: { projectName: "sample-project", serviceName: "blog" },
     },
   ]);
@@ -148,14 +224,14 @@ test("trpc raw write forces mutation mode", async () => {
   const result = await executeWriteCapability(
     ctx,
     "ep.trpc_raw_write",
-    "{\"procedure\":\"box.createService\",\"input\":{\"projectName\":\"sample-project\",\"serviceName\":\"devbox\"}}",
+    "{\"procedure\":\"services.box.createService\",\"input\":{\"projectName\":\"sample-project\",\"serviceName\":\"devbox\"}}",
     true,
   );
   assert.equal(result.ok, true);
   assert.deepEqual(calls, [
     {
       kind: "mutate",
-      procedure: "box.createService",
+      procedure: "services.box.createService",
       input: { projectName: "sample-project", serviceName: "devbox" },
     },
   ]);

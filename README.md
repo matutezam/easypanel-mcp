@@ -2,7 +2,9 @@
 
 MCP server for [EasyPanel](https://easypanel.io) — manage your server, projects, services, databases, and domains through any MCP-compatible AI agent (Claude, Cursor, etc.).
 
-**42 direct tools** or **4 progressive wrapper tools** backed by **43 discoverable capabilities**, plus raw tRPC access to all **347 EasyPanel API procedures**.
+**58 direct tools** or **4 progressive wrapper tools** backed by **59 discoverable capabilities**, plus raw tRPC access to the rest of the EasyPanel API.
+
+This fork currently targets EasyPanel **2.26.x**, where service-specific tRPC procedures live under `services.*`.
 
 ## 🚀 Quick Setup (Deploy on EasyPanel)
 
@@ -110,13 +112,13 @@ It documents:
 ### Direct profile
 
 - Default when `MCP_PROFILE` is omitted
-- Exposes all **42** direct MCP tools
+- Exposes all **58** direct MCP tools
 - Best when the client can safely handle the full tool surface
 
 ### Progressive profile
 
 - Exposes exactly **4** tools: `ep_discover`, `ep_capability_schema`, `ep_execute_read`, `ep_execute_write_guarded`
-- Internally covers **43** discoverable capabilities generated from the same typed catalog as the direct profile
+- Internally covers **59** discoverable capabilities generated from the same typed catalog as the direct profile
 - Keeps write operations guarded and makes the catalog versioned in this fork instead of n8n
 
 The generated catalog snapshot is committed in [`catalog-manifest.json`](./catalog-manifest.json) and can be refreshed with:
@@ -125,13 +127,27 @@ The generated catalog snapshot is committed in [`catalog-manifest.json`](./catal
 npm run generate:manifest
 ```
 
-## 🔧 Direct Tools (42)
+To verify that the curated catalog still matches a specific EasyPanel instance, audit it against that panel's published OpenAPI spec:
+
+```bash
+EASYPANEL_URL=http://your-easypanel-host:3000 EASYPANEL_TOKEN=your-api-token npm run audit:openapi
+```
+
+You can also point it at a saved spec with `OPENAPI_FILE=path/to/openapi.json`.
+
+## 🔧 Direct Tools (58)
 
 ### Projects
 `list_projects` · `create_project` · `destroy_project` · `inspect_project`
 
+### Common Service Operations
+`get_service_notes` · `set_service_notes` · `get_service_error` · `rename_service`
+
 ### App Services
 `create_app` · `inspect_app` · `deploy_app` · `start_app` · `stop_app` · `restart_app` · `destroy_app` · `set_app_source_image` · `set_app_source_github` · `set_app_env` · `set_app_resources`
+
+### Box Services
+`create_box` · `inspect_box` · `start_box` · `stop_box` · `restart_box` · `destroy_box`
 
 ### Databases (Postgres, MySQL, MariaDB, MongoDB, Redis)
 `create_database` · `inspect_database` · `destroy_database`
@@ -148,11 +164,14 @@ npm run generate:manifest
 ### Docker Compose
 `create_compose` · `inspect_compose` · `deploy_compose`
 
+### WordPress Services
+`create_wordpress` · `inspect_wordpress` · `start_wordpress` · `stop_wordpress` · `restart_wordpress` · `destroy_wordpress`
+
 ### System
 `cleanup_docker` · `system_prune` · `restart_panel` · `reboot_server` · `list_users` · `list_certificates` · `list_nodes` · `deploy_template`
 
 ### Escape Hatch
-`trpc_raw` — call any of the 347 tRPC procedures directly
+`trpc_raw` — call any EasyPanel tRPC procedure directly
 
 ## 🔒 Security
 
@@ -208,7 +227,7 @@ Your user now has an `"apiToken"` field — that's the permanent token. Set it a
 
 ## How It Works
 
-EasyPanel exposes a tRPC API at `/api/trpc/`. This MCP server was built by reverse-engineering EasyPanel's frontend to extract all 347 procedure names across 43 namespaces, then mapping the most useful ones to typed MCP tools.
+EasyPanel exposes a tRPC API at `/api/trpc/` and an OpenAPI export at `/api/openapi.json`. This fork keeps a typed registry of curated MCP tools, plus raw tRPC access for everything outside the curated surface.
 
 In this fork, both the direct and progressive profiles are generated from the same typed registry. That registry drives:
 
@@ -216,6 +235,7 @@ In this fork, both the direct and progressive profiles are generated from the sa
 - progressive capability discovery/schema/execution
 - `/health` counts
 - `catalog-manifest.json`
+- `audit:openapi` compatibility checks against a real EasyPanel instance
 
 ## Disclaimer
 

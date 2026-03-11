@@ -2,11 +2,11 @@
   "name": "easypanel",
   "profiles": {
     "direct": {
-      "exposedTools": 42
+      "exposedTools": 58
     },
     "progressive": {
       "exposedTools": 4,
-      "discoverableCapabilities": 43
+      "discoverableCapabilities": 59
     }
   },
   "directTools": [
@@ -124,6 +124,168 @@
           "inspect",
           "details",
           "containers"
+        ],
+        "aliases": [],
+        "discoverable": true
+      }
+    },
+    {
+      "toolName": "get_service_notes",
+      "description": "Get notes attached to a service",
+      "operationKind": "read",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "projectName": {
+            "type": "string",
+            "description": "Project name"
+          },
+          "serviceName": {
+            "type": "string",
+            "description": "Service name"
+          }
+        },
+        "required": [
+          "projectName",
+          "serviceName"
+        ],
+        "additionalProperties": false
+      },
+      "progressive": {
+        "capabilityId": "ep.get_service_notes",
+        "category": "services",
+        "safetyClass": "safe",
+        "keywords": [
+          "service",
+          "notes",
+          "metadata",
+          "annotation"
+        ],
+        "aliases": [],
+        "discoverable": true
+      }
+    },
+    {
+      "toolName": "set_service_notes",
+      "description": "Set or clear notes attached to a service",
+      "operationKind": "write",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "projectName": {
+            "type": "string",
+            "description": "Project name"
+          },
+          "serviceName": {
+            "type": "string",
+            "description": "Service name"
+          },
+          "notes": {
+            "type": "string",
+            "description": "Service notes. Use an empty string to clear them."
+          }
+        },
+        "required": [
+          "projectName",
+          "serviceName",
+          "notes"
+        ],
+        "additionalProperties": false
+      },
+      "progressive": {
+        "capabilityId": "ep.set_service_notes",
+        "category": "services",
+        "safetyClass": "guarded",
+        "keywords": [
+          "service",
+          "notes",
+          "metadata",
+          "annotation",
+          "update"
+        ],
+        "aliases": [],
+        "discoverable": true
+      }
+    },
+    {
+      "toolName": "get_service_error",
+      "description": "Get the latest service error reported by EasyPanel",
+      "operationKind": "read",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "projectName": {
+            "type": "string",
+            "description": "Project name"
+          },
+          "serviceName": {
+            "type": "string",
+            "description": "Service name"
+          }
+        },
+        "required": [
+          "projectName",
+          "serviceName"
+        ],
+        "additionalProperties": false
+      },
+      "progressive": {
+        "capabilityId": "ep.get_service_error",
+        "category": "services",
+        "safetyClass": "safe",
+        "keywords": [
+          "service",
+          "error",
+          "failure",
+          "debug",
+          "diagnostics"
+        ],
+        "aliases": [],
+        "discoverable": true
+      }
+    },
+    {
+      "toolName": "rename_service",
+      "description": "Rename or move a service to another project",
+      "operationKind": "write",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "oldProjectName": {
+            "type": "string",
+            "description": "Current project name"
+          },
+          "oldServiceName": {
+            "type": "string",
+            "description": "Current service name"
+          },
+          "newProjectName": {
+            "type": "string",
+            "description": "New project name"
+          },
+          "newServiceName": {
+            "type": "string",
+            "description": "New service name"
+          }
+        },
+        "required": [
+          "oldProjectName",
+          "oldServiceName",
+          "newProjectName",
+          "newServiceName"
+        ],
+        "additionalProperties": false
+      },
+      "progressive": {
+        "capabilityId": "ep.rename_service",
+        "category": "services",
+        "safetyClass": "guarded",
+        "keywords": [
+          "service",
+          "rename",
+          "move",
+          "project",
+          "transfer"
         ],
         "aliases": [],
         "discoverable": true
@@ -576,6 +738,226 @@
       }
     },
     {
+      "toolName": "create_box",
+      "description": "Create a Box service",
+      "operationKind": "write",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "projectName": {
+            "type": "string",
+            "description": "Project name"
+          },
+          "serviceName": {
+            "type": "string",
+            "description": "Service name"
+          }
+        },
+        "required": [
+          "projectName",
+          "serviceName"
+        ],
+        "additionalProperties": false
+      },
+      "progressive": {
+        "capabilityId": "ep.create_box",
+        "category": "boxes",
+        "safetyClass": "guarded",
+        "keywords": [
+          "box",
+          "devbox",
+          "workspace",
+          "ide",
+          "create"
+        ],
+        "aliases": [],
+        "discoverable": true
+      }
+    },
+    {
+      "toolName": "inspect_box",
+      "description": "Get Box service details",
+      "operationKind": "read",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "projectName": {
+            "type": "string",
+            "description": "Project name"
+          },
+          "serviceName": {
+            "type": "string",
+            "description": "Service name"
+          }
+        },
+        "required": [
+          "projectName",
+          "serviceName"
+        ],
+        "additionalProperties": false
+      },
+      "progressive": {
+        "capabilityId": "ep.inspect_box",
+        "category": "boxes",
+        "safetyClass": "safe",
+        "keywords": [
+          "box",
+          "devbox",
+          "workspace",
+          "inspect",
+          "ide"
+        ],
+        "aliases": [],
+        "discoverable": true
+      }
+    },
+    {
+      "toolName": "start_box",
+      "description": "Start a Box service",
+      "operationKind": "write",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "projectName": {
+            "type": "string",
+            "description": "Project name"
+          },
+          "serviceName": {
+            "type": "string",
+            "description": "Service name"
+          }
+        },
+        "required": [
+          "projectName",
+          "serviceName"
+        ],
+        "additionalProperties": false
+      },
+      "progressive": {
+        "capabilityId": "ep.start_box",
+        "category": "boxes",
+        "safetyClass": "guarded",
+        "keywords": [
+          "box",
+          "devbox",
+          "workspace",
+          "start"
+        ],
+        "aliases": [],
+        "discoverable": true
+      }
+    },
+    {
+      "toolName": "stop_box",
+      "description": "Stop a Box service",
+      "operationKind": "write",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "projectName": {
+            "type": "string",
+            "description": "Project name"
+          },
+          "serviceName": {
+            "type": "string",
+            "description": "Service name"
+          }
+        },
+        "required": [
+          "projectName",
+          "serviceName"
+        ],
+        "additionalProperties": false
+      },
+      "progressive": {
+        "capabilityId": "ep.stop_box",
+        "category": "boxes",
+        "safetyClass": "guarded",
+        "keywords": [
+          "box",
+          "devbox",
+          "workspace",
+          "stop"
+        ],
+        "aliases": [],
+        "discoverable": true
+      }
+    },
+    {
+      "toolName": "restart_box",
+      "description": "Restart a Box service",
+      "operationKind": "write",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "projectName": {
+            "type": "string",
+            "description": "Project name"
+          },
+          "serviceName": {
+            "type": "string",
+            "description": "Service name"
+          }
+        },
+        "required": [
+          "projectName",
+          "serviceName"
+        ],
+        "additionalProperties": false
+      },
+      "progressive": {
+        "capabilityId": "ep.restart_box",
+        "category": "boxes",
+        "safetyClass": "guarded",
+        "keywords": [
+          "box",
+          "devbox",
+          "workspace",
+          "restart"
+        ],
+        "aliases": [],
+        "discoverable": true
+      }
+    },
+    {
+      "toolName": "destroy_box",
+      "description": "Delete a Box service",
+      "operationKind": "write",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "projectName": {
+            "type": "string",
+            "description": "Project name"
+          },
+          "serviceName": {
+            "type": "string",
+            "description": "Service name"
+          }
+        },
+        "required": [
+          "projectName",
+          "serviceName"
+        ],
+        "additionalProperties": false
+      },
+      "progressive": {
+        "capabilityId": "ep.destroy_box",
+        "category": "boxes",
+        "safetyClass": "dangerous",
+        "keywords": [
+          "box",
+          "devbox",
+          "workspace",
+          "delete",
+          "destroy",
+          "remove"
+        ],
+        "aliases": [],
+        "discoverable": true
+      }
+    },
+    {
       "toolName": "create_compose",
       "description": "Create a Docker Compose service",
       "operationKind": "write",
@@ -679,6 +1061,230 @@
           "docker",
           "stack",
           "deploy"
+        ],
+        "aliases": [],
+        "discoverable": true
+      }
+    },
+    {
+      "toolName": "create_wordpress",
+      "description": "Create a WordPress service",
+      "operationKind": "write",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "projectName": {
+            "type": "string",
+            "description": "Project name"
+          },
+          "serviceName": {
+            "type": "string",
+            "description": "Service name"
+          }
+        },
+        "required": [
+          "projectName",
+          "serviceName"
+        ],
+        "additionalProperties": false
+      },
+      "progressive": {
+        "capabilityId": "ep.create_wordpress",
+        "category": "wordpress",
+        "safetyClass": "guarded",
+        "keywords": [
+          "wordpress",
+          "wp",
+          "blog",
+          "cms",
+          "create"
+        ],
+        "aliases": [],
+        "discoverable": true
+      }
+    },
+    {
+      "toolName": "inspect_wordpress",
+      "description": "Get WordPress service details",
+      "operationKind": "read",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "projectName": {
+            "type": "string",
+            "description": "Project name"
+          },
+          "serviceName": {
+            "type": "string",
+            "description": "Service name"
+          }
+        },
+        "required": [
+          "projectName",
+          "serviceName"
+        ],
+        "additionalProperties": false
+      },
+      "progressive": {
+        "capabilityId": "ep.inspect_wordpress",
+        "category": "wordpress",
+        "safetyClass": "safe",
+        "keywords": [
+          "wordpress",
+          "wp",
+          "blog",
+          "cms",
+          "inspect"
+        ],
+        "aliases": [],
+        "discoverable": true
+      }
+    },
+    {
+      "toolName": "start_wordpress",
+      "description": "Start a WordPress service",
+      "operationKind": "write",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "projectName": {
+            "type": "string",
+            "description": "Project name"
+          },
+          "serviceName": {
+            "type": "string",
+            "description": "Service name"
+          }
+        },
+        "required": [
+          "projectName",
+          "serviceName"
+        ],
+        "additionalProperties": false
+      },
+      "progressive": {
+        "capabilityId": "ep.start_wordpress",
+        "category": "wordpress",
+        "safetyClass": "guarded",
+        "keywords": [
+          "wordpress",
+          "wp",
+          "blog",
+          "cms",
+          "start"
+        ],
+        "aliases": [],
+        "discoverable": true
+      }
+    },
+    {
+      "toolName": "stop_wordpress",
+      "description": "Stop a WordPress service",
+      "operationKind": "write",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "projectName": {
+            "type": "string",
+            "description": "Project name"
+          },
+          "serviceName": {
+            "type": "string",
+            "description": "Service name"
+          }
+        },
+        "required": [
+          "projectName",
+          "serviceName"
+        ],
+        "additionalProperties": false
+      },
+      "progressive": {
+        "capabilityId": "ep.stop_wordpress",
+        "category": "wordpress",
+        "safetyClass": "guarded",
+        "keywords": [
+          "wordpress",
+          "wp",
+          "blog",
+          "cms",
+          "stop"
+        ],
+        "aliases": [],
+        "discoverable": true
+      }
+    },
+    {
+      "toolName": "restart_wordpress",
+      "description": "Restart a WordPress service",
+      "operationKind": "write",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "projectName": {
+            "type": "string",
+            "description": "Project name"
+          },
+          "serviceName": {
+            "type": "string",
+            "description": "Service name"
+          }
+        },
+        "required": [
+          "projectName",
+          "serviceName"
+        ],
+        "additionalProperties": false
+      },
+      "progressive": {
+        "capabilityId": "ep.restart_wordpress",
+        "category": "wordpress",
+        "safetyClass": "guarded",
+        "keywords": [
+          "wordpress",
+          "wp",
+          "blog",
+          "cms",
+          "restart"
+        ],
+        "aliases": [],
+        "discoverable": true
+      }
+    },
+    {
+      "toolName": "destroy_wordpress",
+      "description": "Delete a WordPress service",
+      "operationKind": "write",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "projectName": {
+            "type": "string",
+            "description": "Project name"
+          },
+          "serviceName": {
+            "type": "string",
+            "description": "Service name"
+          }
+        },
+        "required": [
+          "projectName",
+          "serviceName"
+        ],
+        "additionalProperties": false
+      },
+      "progressive": {
+        "capabilityId": "ep.destroy_wordpress",
+        "category": "wordpress",
+        "safetyClass": "dangerous",
+        "keywords": [
+          "wordpress",
+          "wp",
+          "blog",
+          "cms",
+          "delete",
+          "destroy",
+          "remove"
         ],
         "aliases": [],
         "discoverable": true
@@ -955,14 +1561,14 @@
     },
     {
       "toolName": "trpc_raw",
-      "description": "Call any EasyPanel tRPC procedure directly. 347 procedures across 43 namespaces. Use for anything not covered above.",
+      "description": "Call any EasyPanel tRPC procedure directly. Use for anything not covered by the curated tools.",
       "operationKind": "mixed",
       "inputSchema": {
         "type": "object",
         "properties": {
           "procedure": {
             "type": "string",
-            "description": "Full tRPC procedure name (e.g. 'wordpress.inspectService')"
+            "description": "Full tRPC procedure name (e.g. 'services.wordpress.inspectService')"
           },
           "input": {
             "type": "object",
@@ -1621,6 +2227,148 @@
       }
     },
     {
+      "id": "ep.get_service_notes",
+      "toolName": "get_service_notes",
+      "mode": "read",
+      "category": "services",
+      "safetyClass": "safe",
+      "discoverable": true,
+      "aliases": [],
+      "argsSchema": {
+        "type": "object",
+        "properties": {
+          "projectName": {
+            "type": "string",
+            "description": "Project name"
+          },
+          "serviceName": {
+            "type": "string",
+            "description": "Service name"
+          }
+        },
+        "required": [
+          "projectName",
+          "serviceName"
+        ],
+        "additionalProperties": false
+      },
+      "example": {
+        "projectName": "sample-project",
+        "serviceName": "easypanel-mcp"
+      }
+    },
+    {
+      "id": "ep.set_service_notes",
+      "toolName": "set_service_notes",
+      "mode": "write_guarded",
+      "category": "services",
+      "safetyClass": "guarded",
+      "discoverable": true,
+      "aliases": [],
+      "argsSchema": {
+        "type": "object",
+        "properties": {
+          "projectName": {
+            "type": "string",
+            "description": "Project name"
+          },
+          "serviceName": {
+            "type": "string",
+            "description": "Service name"
+          },
+          "notes": {
+            "type": "string",
+            "description": "Service notes. Use an empty string to clear them."
+          }
+        },
+        "required": [
+          "projectName",
+          "serviceName",
+          "notes"
+        ],
+        "additionalProperties": false
+      },
+      "example": {
+        "projectName": "sample-project",
+        "serviceName": "easypanel-mcp",
+        "notes": "Managed by MCP"
+      }
+    },
+    {
+      "id": "ep.get_service_error",
+      "toolName": "get_service_error",
+      "mode": "read",
+      "category": "services",
+      "safetyClass": "safe",
+      "discoverable": true,
+      "aliases": [],
+      "argsSchema": {
+        "type": "object",
+        "properties": {
+          "projectName": {
+            "type": "string",
+            "description": "Project name"
+          },
+          "serviceName": {
+            "type": "string",
+            "description": "Service name"
+          }
+        },
+        "required": [
+          "projectName",
+          "serviceName"
+        ],
+        "additionalProperties": false
+      },
+      "example": {
+        "projectName": "sample-project",
+        "serviceName": "easypanel-mcp"
+      }
+    },
+    {
+      "id": "ep.rename_service",
+      "toolName": "rename_service",
+      "mode": "write_guarded",
+      "category": "services",
+      "safetyClass": "guarded",
+      "discoverable": true,
+      "aliases": [],
+      "argsSchema": {
+        "type": "object",
+        "properties": {
+          "oldProjectName": {
+            "type": "string",
+            "description": "Current project name"
+          },
+          "oldServiceName": {
+            "type": "string",
+            "description": "Current service name"
+          },
+          "newProjectName": {
+            "type": "string",
+            "description": "New project name"
+          },
+          "newServiceName": {
+            "type": "string",
+            "description": "New service name"
+          }
+        },
+        "required": [
+          "oldProjectName",
+          "oldServiceName",
+          "newProjectName",
+          "newServiceName"
+        ],
+        "additionalProperties": false
+      },
+      "example": {
+        "oldProjectName": "sample-project",
+        "oldServiceName": "easypanel-mcp",
+        "newProjectName": "target-project",
+        "newServiceName": "easypanel-mcp"
+      }
+    },
+    {
       "id": "ep.create_app",
       "toolName": "create_app",
       "mode": "write_guarded",
@@ -2012,6 +2760,192 @@
       }
     },
     {
+      "id": "ep.create_box",
+      "toolName": "create_box",
+      "mode": "write_guarded",
+      "category": "boxes",
+      "safetyClass": "guarded",
+      "discoverable": true,
+      "aliases": [],
+      "argsSchema": {
+        "type": "object",
+        "properties": {
+          "projectName": {
+            "type": "string",
+            "description": "Project name"
+          },
+          "serviceName": {
+            "type": "string",
+            "description": "Service name"
+          }
+        },
+        "required": [
+          "projectName",
+          "serviceName"
+        ],
+        "additionalProperties": false
+      },
+      "example": {
+        "projectName": "sample-project",
+        "serviceName": "devbox"
+      }
+    },
+    {
+      "id": "ep.inspect_box",
+      "toolName": "inspect_box",
+      "mode": "read",
+      "category": "boxes",
+      "safetyClass": "safe",
+      "discoverable": true,
+      "aliases": [],
+      "argsSchema": {
+        "type": "object",
+        "properties": {
+          "projectName": {
+            "type": "string",
+            "description": "Project name"
+          },
+          "serviceName": {
+            "type": "string",
+            "description": "Service name"
+          }
+        },
+        "required": [
+          "projectName",
+          "serviceName"
+        ],
+        "additionalProperties": false
+      },
+      "example": {
+        "projectName": "sample-project",
+        "serviceName": "devbox"
+      }
+    },
+    {
+      "id": "ep.start_box",
+      "toolName": "start_box",
+      "mode": "write_guarded",
+      "category": "boxes",
+      "safetyClass": "guarded",
+      "discoverable": true,
+      "aliases": [],
+      "argsSchema": {
+        "type": "object",
+        "properties": {
+          "projectName": {
+            "type": "string",
+            "description": "Project name"
+          },
+          "serviceName": {
+            "type": "string",
+            "description": "Service name"
+          }
+        },
+        "required": [
+          "projectName",
+          "serviceName"
+        ],
+        "additionalProperties": false
+      },
+      "example": {
+        "projectName": "sample-project",
+        "serviceName": "devbox"
+      }
+    },
+    {
+      "id": "ep.stop_box",
+      "toolName": "stop_box",
+      "mode": "write_guarded",
+      "category": "boxes",
+      "safetyClass": "guarded",
+      "discoverable": true,
+      "aliases": [],
+      "argsSchema": {
+        "type": "object",
+        "properties": {
+          "projectName": {
+            "type": "string",
+            "description": "Project name"
+          },
+          "serviceName": {
+            "type": "string",
+            "description": "Service name"
+          }
+        },
+        "required": [
+          "projectName",
+          "serviceName"
+        ],
+        "additionalProperties": false
+      },
+      "example": {
+        "projectName": "sample-project",
+        "serviceName": "devbox"
+      }
+    },
+    {
+      "id": "ep.restart_box",
+      "toolName": "restart_box",
+      "mode": "write_guarded",
+      "category": "boxes",
+      "safetyClass": "guarded",
+      "discoverable": true,
+      "aliases": [],
+      "argsSchema": {
+        "type": "object",
+        "properties": {
+          "projectName": {
+            "type": "string",
+            "description": "Project name"
+          },
+          "serviceName": {
+            "type": "string",
+            "description": "Service name"
+          }
+        },
+        "required": [
+          "projectName",
+          "serviceName"
+        ],
+        "additionalProperties": false
+      },
+      "example": {
+        "projectName": "sample-project",
+        "serviceName": "devbox"
+      }
+    },
+    {
+      "id": "ep.destroy_box",
+      "toolName": "destroy_box",
+      "mode": "write_guarded",
+      "category": "boxes",
+      "safetyClass": "dangerous",
+      "discoverable": true,
+      "aliases": [],
+      "argsSchema": {
+        "type": "object",
+        "properties": {
+          "projectName": {
+            "type": "string",
+            "description": "Project name"
+          },
+          "serviceName": {
+            "type": "string",
+            "description": "Service name"
+          }
+        },
+        "required": [
+          "projectName",
+          "serviceName"
+        ],
+        "additionalProperties": false
+      },
+      "example": {
+        "projectName": "sample-project",
+        "serviceName": "devbox"
+      }
+    },
+    {
       "id": "ep.create_compose",
       "toolName": "create_compose",
       "mode": "write_guarded",
@@ -2102,6 +3036,192 @@
       "example": {
         "projectName": "sample-project",
         "serviceName": "compose-stack"
+      }
+    },
+    {
+      "id": "ep.create_wordpress",
+      "toolName": "create_wordpress",
+      "mode": "write_guarded",
+      "category": "wordpress",
+      "safetyClass": "guarded",
+      "discoverable": true,
+      "aliases": [],
+      "argsSchema": {
+        "type": "object",
+        "properties": {
+          "projectName": {
+            "type": "string",
+            "description": "Project name"
+          },
+          "serviceName": {
+            "type": "string",
+            "description": "Service name"
+          }
+        },
+        "required": [
+          "projectName",
+          "serviceName"
+        ],
+        "additionalProperties": false
+      },
+      "example": {
+        "projectName": "sample-project",
+        "serviceName": "wp-blog"
+      }
+    },
+    {
+      "id": "ep.inspect_wordpress",
+      "toolName": "inspect_wordpress",
+      "mode": "read",
+      "category": "wordpress",
+      "safetyClass": "safe",
+      "discoverable": true,
+      "aliases": [],
+      "argsSchema": {
+        "type": "object",
+        "properties": {
+          "projectName": {
+            "type": "string",
+            "description": "Project name"
+          },
+          "serviceName": {
+            "type": "string",
+            "description": "Service name"
+          }
+        },
+        "required": [
+          "projectName",
+          "serviceName"
+        ],
+        "additionalProperties": false
+      },
+      "example": {
+        "projectName": "sample-project",
+        "serviceName": "wp-blog"
+      }
+    },
+    {
+      "id": "ep.start_wordpress",
+      "toolName": "start_wordpress",
+      "mode": "write_guarded",
+      "category": "wordpress",
+      "safetyClass": "guarded",
+      "discoverable": true,
+      "aliases": [],
+      "argsSchema": {
+        "type": "object",
+        "properties": {
+          "projectName": {
+            "type": "string",
+            "description": "Project name"
+          },
+          "serviceName": {
+            "type": "string",
+            "description": "Service name"
+          }
+        },
+        "required": [
+          "projectName",
+          "serviceName"
+        ],
+        "additionalProperties": false
+      },
+      "example": {
+        "projectName": "sample-project",
+        "serviceName": "wp-blog"
+      }
+    },
+    {
+      "id": "ep.stop_wordpress",
+      "toolName": "stop_wordpress",
+      "mode": "write_guarded",
+      "category": "wordpress",
+      "safetyClass": "guarded",
+      "discoverable": true,
+      "aliases": [],
+      "argsSchema": {
+        "type": "object",
+        "properties": {
+          "projectName": {
+            "type": "string",
+            "description": "Project name"
+          },
+          "serviceName": {
+            "type": "string",
+            "description": "Service name"
+          }
+        },
+        "required": [
+          "projectName",
+          "serviceName"
+        ],
+        "additionalProperties": false
+      },
+      "example": {
+        "projectName": "sample-project",
+        "serviceName": "wp-blog"
+      }
+    },
+    {
+      "id": "ep.restart_wordpress",
+      "toolName": "restart_wordpress",
+      "mode": "write_guarded",
+      "category": "wordpress",
+      "safetyClass": "guarded",
+      "discoverable": true,
+      "aliases": [],
+      "argsSchema": {
+        "type": "object",
+        "properties": {
+          "projectName": {
+            "type": "string",
+            "description": "Project name"
+          },
+          "serviceName": {
+            "type": "string",
+            "description": "Service name"
+          }
+        },
+        "required": [
+          "projectName",
+          "serviceName"
+        ],
+        "additionalProperties": false
+      },
+      "example": {
+        "projectName": "sample-project",
+        "serviceName": "wp-blog"
+      }
+    },
+    {
+      "id": "ep.destroy_wordpress",
+      "toolName": "destroy_wordpress",
+      "mode": "write_guarded",
+      "category": "wordpress",
+      "safetyClass": "dangerous",
+      "discoverable": true,
+      "aliases": [],
+      "argsSchema": {
+        "type": "object",
+        "properties": {
+          "projectName": {
+            "type": "string",
+            "description": "Project name"
+          },
+          "serviceName": {
+            "type": "string",
+            "description": "Service name"
+          }
+        },
+        "required": [
+          "projectName",
+          "serviceName"
+        ],
+        "additionalProperties": false
+      },
+      "example": {
+        "projectName": "sample-project",
+        "serviceName": "wp-blog"
       }
     },
     {
@@ -2818,7 +3938,7 @@
         "additionalProperties": false
       },
       "example": {
-        "procedure": "wordpress.inspectService",
+        "procedure": "services.wordpress.inspectService",
         "input": {
           "projectName": "sample-project",
           "serviceName": "blog"
@@ -2852,7 +3972,7 @@
         "additionalProperties": false
       },
       "example": {
-        "procedure": "box.createService",
+        "procedure": "services.box.createService",
         "input": {
           "projectName": "sample-project",
           "serviceName": "devbox"
