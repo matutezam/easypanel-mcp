@@ -623,7 +623,8 @@
           "projectName",
           "serviceName",
           "owner",
-          "repo"
+          "repo",
+          "branch"
         ],
         "additionalProperties": false
       },
@@ -2662,7 +2663,8 @@
           "projectName",
           "serviceName",
           "owner",
-          "repo"
+          "repo",
+          "branch"
         ],
         "additionalProperties": false
       },

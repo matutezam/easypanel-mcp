@@ -627,11 +627,19 @@ directToolSpecs.push(
       ...projectServiceInput,
       owner: stringField("GitHub owner"),
       repo: stringField("GitHub repository"),
-      branch: stringField("Git branch", true),
+      branch: stringField("Git branch"),
       path: stringField("Subdirectory", true),
     },
     "write",
-    async (ctx, args) => ctx.mutate(appProcedures.updateSourceGithub, args),
+    async (ctx, args) =>
+      ctx.mutate(appProcedures.updateSourceGithub, {
+        projectName: args.projectName as string,
+        serviceName: args.serviceName as string,
+        owner: args.owner as string,
+        repo: args.repo as string,
+        ref: args.branch as string,
+        ...(args.path !== undefined ? { path: args.path as string } : {}),
+      }),
     {
       category: "apps",
       keywords: ["app", "github", "git", "source", "repo"],
@@ -1185,7 +1193,16 @@ directToolSpecs.push(
       protocol: enumField(["tcp", "udp"], "Protocol", true),
     },
     "write",
-    async (ctx, args) => ctx.mutate(portProcedures.createPort, args),
+    async (ctx, args) =>
+      ctx.mutate(portProcedures.createPort, {
+        projectName: args.projectName as string,
+        serviceName: args.serviceName as string,
+        values: {
+          published: args.publishedPort as number,
+          target: args.targetPort as number,
+          protocol: (args.protocol as string | undefined) ?? "tcp",
+        },
+      }),
     {
       category: "ports",
       keywords: ["port", "ports", "expose", "publish", "tcp", "udp"],

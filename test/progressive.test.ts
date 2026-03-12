@@ -167,6 +167,57 @@ test("app creation dispatches to the services.app namespace", async () => {
   ]);
 });
 
+test("github app source maps branch to ref for the EasyPanel API", async () => {
+  const { ctx, calls } = createFakeContext();
+  const result = await executeWriteCapability(
+    ctx,
+    "ep.set_app_source_github",
+    "{\"projectName\":\"sample-project\",\"serviceName\":\"web-app\",\"owner\":\"example-user\",\"repo\":\"example-repo\",\"branch\":\"main\",\"path\":\"/\"}",
+    true,
+  );
+  assert.equal(result.ok, true);
+  assert.deepEqual(calls, [
+    {
+      kind: "mutate",
+      procedure: "services.app.updateSourceGithub",
+      input: {
+        projectName: "sample-project",
+        serviceName: "web-app",
+        owner: "example-user",
+        repo: "example-repo",
+        ref: "main",
+        path: "/",
+      },
+    },
+  ]);
+});
+
+test("port creation wraps published and target ports in a values object", async () => {
+  const { ctx, calls } = createFakeContext();
+  const result = await executeWriteCapability(
+    ctx,
+    "ep.create_port",
+    "{\"projectName\":\"sample-project\",\"serviceName\":\"web-app\",\"publishedPort\":8080,\"targetPort\":3000,\"protocol\":\"tcp\"}",
+    true,
+  );
+  assert.equal(result.ok, true);
+  assert.deepEqual(calls, [
+    {
+      kind: "mutate",
+      procedure: "ports.createPort",
+      input: {
+        projectName: "sample-project",
+        serviceName: "web-app",
+        values: {
+          published: 8080,
+          target: 3000,
+          protocol: "tcp",
+        },
+      },
+    },
+  ]);
+});
+
 test("database inspection dispatches to the services.<engine> namespace", async () => {
   const { ctx, calls } = createFakeContext();
   const result = await executeReadCapability(
