@@ -54,15 +54,10 @@ Run this when you want upstream updates:
 git checkout main
 git pull --ff-only origin main
 git fetch upstream
-git merge upstream/main
-# resolve conflicts if needed
-git push origin main
+# inspect upstream/main, then cherry-pick or manually adapt only the relevant fixes
 ```
 
-If conflicts happen:
-1. Keep upstream improvements by default.
-2. Re-apply local compatibility patches intentionally (do not blindly keep old code).
-3. Run smoke checks before pushing.
+Do **not** merge `upstream/main` blindly. This fork intentionally keeps `src/catalog.ts`, `src/progressive.ts`, `src/server.ts`, `MCP_PROFILE=progressive|direct`, and `MCP_ACCESS_MODE=readonly|full`. Upstream may be monolithic or have a different tool surface, so reconciliation is selective: OAuth fixes, Cloudflare Access support, client/auth fixes, log redaction, CORS/MCP protocol header fixes, and spec conformance are adapted without replacing the progressive/catalog architecture.
 
 ## Compatibility Policy for EasyPanel API Changes
 
@@ -74,8 +69,11 @@ To avoid breakage:
 3. Add a smoke checklist for both `readonly` and `full` modes.
 
 Current fork assumption:
-- EasyPanel `2.26.x` is the target baseline.
+- EasyPanel `2.30.1` is the target baseline.
 - Service-specific procedures are expected under `services.*`.
+- Monitoring uses `monitorOld.getSystemStats`, `monitorOld.getServiceStats`, and `monitorOld.getStorageStats`; newer `metrics.*` procedures are intentionally out of this first correction.
+- Progressive discovery is catalog-based and versioned; it is not live runtime discovery from EasyPanel.
+- `ep.list_projects` and `ep.list_projects_services` return sanitized inventory only: project name, service name, and optional published ports.
 - The live panel's `/api/openapi.json` is the source of truth for compatibility checks.
 
 ## Mandatory Post-Upgrade Workflow
@@ -85,8 +83,8 @@ After updating the deployed EasyPanel instance, do not redeploy this MCP blindly
 Run this sequence first:
 
 ```bash
-npm run build
 npm test
+npm run generate:manifest
 EASYPANEL_URL=http://your-easypanel-host:3000 EASYPANEL_TOKEN=your-token npm run audit:openapi
 ```
 
@@ -97,7 +95,7 @@ Interpretation:
   - update [src/progressive.ts](./src/progressive.ts) if discovery keywords/categories changed
   - update [test/progressive.test.ts](./test/progressive.test.ts)
   - regenerate [catalog-manifest.json](./catalog-manifest.json) with `npm run generate:manifest`
-  - rerun `build`, `test`, and `audit:openapi`
+  - rerun `test`, `generate:manifest`, and `audit:openapi`
 
 Only after that should `main` be pushed and redeployed in EasyPanel.
 
@@ -115,9 +113,13 @@ This prevents two common failures:
 
 Suggested smoke checks after sync:
 - `GET /health` returns `200` and expected `auth` state.
-- `list_projects` works through MCP.
-- In `readonly`: mutations return blocked error.
-- In `full`: create/delete test resource succeeds.
+- `ep_discover` returns relevant read capabilities.
+- `ep_execute_read ep.list_projects` returns sanitized inventory and does not expose secrets.
+- `ep_execute_read ep.list_projects_services` remains compatible.
+- `ep_execute_read ep.system_stats`, `ep.service_stats`, and `ep.storage_stats` work against `monitorOld.*`.
+- `ep_execute_read ep.list_actions` still works.
+- `ep_execute_write_guarded` without `approved=true` blocks writes.
+- Only run real write smoke tests in `full` mode with explicit approval and disposable resources.
 
 ## Deploying This Fork in EasyPanel
 
@@ -140,3 +142,7 @@ If a new deploy breaks:
 
 You can configure a periodic GitHub Action in the fork to open PRs from `upstream/main` into `main`.
 Keep this optional until compatibility code is mature.
+
+## Escape Hatch Caveat
+
+`ep.trpc_raw_read` and `ep.trpc_raw_write` are intentional escape hatches for procedures outside the curated catalog. They bypass the curated response-shaping guarantees, so a poorly chosen raw procedure can expose env vars, credentials, tokens, commit/source payloads, or other sensitive data. Prefer curated capabilities for normal agent workflows.

@@ -55,6 +55,7 @@ type ProgressiveToolMetadata = {
   example?: Record<string, unknown>;
   discoverable?: boolean;
   aliases?: string[];
+  transformResult?: (result: unknown, args: Record<string, unknown>) => unknown;
 };
 
 export type ToolSpec = {
@@ -197,9 +198,9 @@ const mountProcedures = {
 } as const;
 
 const monitorProcedures = {
-  getSystemStats: "monitor.getSystemStats",
-  getServiceStats: "monitor.getServiceStats",
-  getStorageStats: "monitor.getStorageStats",
+  getSystemStats: "monitorOld.getSystemStats",
+  getServiceStats: "monitorOld.getServiceStats",
+  getStorageStats: "monitorOld.getStorageStats",
 } as const;
 
 const actionProcedures = {
@@ -331,6 +332,14 @@ export function createServerContext(client: EasyPanelClient, readonly: boolean):
 }
 
 function sanitizeProjectsAndServices(data: unknown, projectNameFilter?: unknown) {
+  const filter = String(projectNameFilter || "").trim().toLowerCase();
+
+  if (Array.isArray(data)) {
+    return filter
+      ? data.filter((row) => String((row as { project?: unknown }).project || "").toLowerCase() === filter)
+      : data;
+  }
+
   if (!data || typeof data !== "object") return [];
 
   const source = data as {
@@ -344,7 +353,6 @@ function sanitizeProjectsAndServices(data: unknown, projectNameFilter?: unknown)
 
   const projects = source.projects;
   const servicesList = source.services;
-  const filter = String(projectNameFilter || "").trim().toLowerCase();
 
   const rows = projects.map((project) => {
     const services = servicesList
@@ -381,17 +389,18 @@ export const directToolSpecs: ToolSpec[] = [];
 directToolSpecs.push(
   tool(
     "list_projects",
-    "List all projects and their services",
+    "List projects and services with a sanitized inventory shape",
     noInput,
     "read",
     async (ctx) => ctx.query(projectProcedures.listProjectsAndServices),
     {
       category: "projects",
-      keywords: ["project", "projects", "services", "inventory", "overview"],
+      keywords: ["project", "projects", "services", "inventory", "overview", "ports"],
       safetyClass: "safe",
-      summary: "List all projects and their services.",
+      summary: "List projects and services without exposing env, tokens, credentials, or source payloads.",
       example: {},
       aliases: ["ep.list_projects_services"],
+      transformResult: (result, args) => sanitizeProjectsAndServices(result, args.projectName),
     },
   ),
   tool(
@@ -1323,6 +1332,7 @@ generatedCapabilitySpecs.push(
         discoverable: progressive.discoverable ?? true,
         aliases: progressive.aliases ?? [],
         argsSchema: buildArgsSchema(toolSpec.input),
+        transformResult: progressive.transformResult,
       };
     }),
 );
@@ -1423,7 +1433,11 @@ export function executeToolSpec(
   toolSpec: ToolSpec,
   args: Record<string, unknown>,
 ): Promise<unknown> {
-  return toolSpec.handler(ctx, args);
+  return toolSpec.handler(ctx, args).then((result) =>
+    toolSpec.progressive && toolSpec.progressive.transformResult
+      ? toolSpec.progressive.transformResult(result, args)
+      : result,
+  );
 }
 
 export function buildCatalogManifest() {

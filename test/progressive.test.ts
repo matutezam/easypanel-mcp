@@ -23,7 +23,18 @@ function createFakeContext() {
         if (procedure === "projects.listProjectsAndServices") {
           return {
             projects: [{ name: "sample-project" }],
-            services: [{ name: "sample-service", projectName: "sample-project", ports: [{ published: 3101 }] }],
+            services: [
+              {
+                name: "sample-service",
+                projectName: "sample-project",
+                ports: [{ published: 3101 }],
+                env: "TOKEN=secret",
+                token: "secret-token",
+                password: "secret-password",
+                apiKey: "secret-api-key",
+                commit: { sha: "abc", message: "full payload" },
+              },
+            ],
           };
         }
         return { procedure, input };
@@ -53,7 +64,7 @@ test("capability ids are unique", () => {
   assert.equal(new Set(ids).size, ids.length);
 });
 
-test("catalog procedure registry matches the EasyPanel 2.26.x service namespace layout", () => {
+test("catalog procedure registry matches the EasyPanel 2.30.1 service namespace layout", () => {
   assert.equal(new Set(catalogProcedureNames).size, catalogProcedureNames.length);
   assert.ok(catalogProcedureNames.includes("services.common.getNotes"));
   assert.ok(catalogProcedureNames.includes("services.app.inspectService"));
@@ -66,6 +77,12 @@ test("catalog procedure registry matches the EasyPanel 2.26.x service namespace 
   assert.ok(!catalogProcedureNames.includes("compose.createService"));
   assert.ok(!catalogProcedureNames.includes("postgres.inspectService"));
   assert.ok(!catalogProcedureNames.includes("wordpress.inspectService"));
+  assert.ok(catalogProcedureNames.includes("monitorOld.getSystemStats"));
+  assert.ok(catalogProcedureNames.includes("monitorOld.getServiceStats"));
+  assert.ok(catalogProcedureNames.includes("monitorOld.getStorageStats"));
+  assert.ok(!catalogProcedureNames.includes("monitor.getSystemStats"));
+  assert.ok(!catalogProcedureNames.includes("monitor.getServiceStats"));
+  assert.ok(!catalogProcedureNames.includes("monitor.getStorageStats"));
 });
 
 test("progressive profile exposes exactly four external tools", () => {
@@ -118,6 +135,19 @@ test("capability schema is generated from the catalog", () => {
     assert.equal(result.mode, "write_guarded");
     assert.equal(result.category, "apps");
     assert.deepEqual(result.argsSchema.required, ["projectName", "serviceName"]);
+  }
+});
+
+test("list_projects returns sanitized project/service inventory", async () => {
+  const { ctx } = createFakeContext();
+  const result = await executeReadCapability(ctx, "ep.list_projects", "{}");
+  assert.equal(result.ok, true);
+  if (result.ok) {
+    assert.deepEqual(result.data, [{ project: "sample-project", services: [{ serviceName: "sample-service", ports: [3101] }] }]);
+    const serialized = JSON.stringify(result.data).toLowerCase();
+    for (const forbidden of ["env", "token", "password", "secret", "apikey", "commit"]) {
+      assert.ok(!serialized.includes(forbidden), `sanitized inventory leaked ${forbidden}`);
+    }
   }
 });
 

@@ -4,7 +4,7 @@ MCP server for [EasyPanel](https://easypanel.io) — manage your server, project
 
 **58 direct tools** or **4 progressive wrapper tools** backed by **59 discoverable capabilities**, plus raw tRPC access to the rest of the EasyPanel API.
 
-This fork currently targets EasyPanel **2.26.x**, where service-specific tRPC procedures live under `services.*`.
+This fork currently targets EasyPanel **2.30.1**, where service-specific tRPC procedures live under `services.*` and legacy monitoring procedures are exposed under `monitorOld.*`.
 
 ## 🚀 Quick Setup (Deploy on EasyPanel)
 
@@ -77,7 +77,7 @@ Run the MCP server locally via stdio (no deployment needed):
 ```bash
 git clone https://github.com/<your-github-user>/easypanel-mcp.git
 cd easypanel-mcp
-npm install && npm run build
+npm install
 ```
 
 ```json
@@ -119,7 +119,8 @@ It documents:
 
 - Exposes exactly **4** tools: `ep_discover`, `ep_capability_schema`, `ep_execute_read`, `ep_execute_write_guarded`
 - Internally covers **59** discoverable capabilities generated from the same typed catalog as the direct profile
-- Keeps write operations guarded and makes the catalog versioned in this fork instead of n8n
+- Discovery is **progressive/catalog-based**: a curated, versioned capability catalog, not live runtime discovery from EasyPanel
+- Keeps write operations guarded and makes the catalog versioned in this fork
 
 The generated catalog snapshot is committed in [`catalog-manifest.json`](./catalog-manifest.json) and can be refreshed with:
 
@@ -127,7 +128,7 @@ The generated catalog snapshot is committed in [`catalog-manifest.json`](./catal
 npm run generate:manifest
 ```
 
-To verify that the curated catalog still matches a specific EasyPanel instance, audit it against that panel's published OpenAPI spec:
+After every EasyPanel upgrade, verify that the curated catalog still matches the target instance by auditing it against that panel's published OpenAPI spec:
 
 ```bash
 EASYPANEL_URL=http://your-easypanel-host:3000 EASYPANEL_TOKEN=your-api-token npm run audit:openapi
@@ -171,25 +172,34 @@ You can also point it at a saved spec with `OPENAPI_FILE=path/to/openapi.json`.
 `cleanup_docker` · `system_prune` · `restart_panel` · `reboot_server` · `list_users` · `list_certificates` · `list_nodes` · `deploy_template`
 
 ### Escape Hatch
-`trpc_raw` — call any EasyPanel tRPC procedure directly
+`trpc_raw` — escape hatch to call EasyPanel tRPC procedures directly. Use carefully: raw calls can expose sensitive response data if the chosen procedure returns credentials, env vars, tokens, source metadata, or other secrets.
 
 ## 🔒 Security
 
 - **`MCP_API_KEY`** — protects the HTTP endpoint with Bearer token auth
-- **`EASYPANEL_TOKEN`** — authenticates with your EasyPanel instance
+- **`EASYPANEL_AUTH_MODE=oauth`** — optional HTTP OAuth mode where each caller authenticates to EasyPanel instead of sharing one backend token
+- **`EASYPANEL_TOKEN`** — authenticates with your EasyPanel instance in stdio/bearer modes
+- **Cloudflare Access service headers** — `CF_ACCESS_CLIENT_ID` and `CF_ACCESS_CLIENT_SECRET` are forwarded to EasyPanel when the backend sits behind Zero Trust
 - Health endpoint (`/health`) is always public (returns no sensitive data)
 - In local/stdio mode, no network auth is needed
+- Request logging redacts sensitive headers in debug output
 
 ## Environment Variables
 
 | Variable | Required | Description |
 |----------|----------|-------------|
 | `EASYPANEL_URL` | ✅ | Your EasyPanel URL |
-| `EASYPANEL_TOKEN` | ✅ | API token from login |
+| `EASYPANEL_TOKEN` | Bearer/stdio | API token from login; not required for HTTP OAuth mode |
 | `EASYPANEL_MCP_MODE` | For HTTP | Set to `http` for remote deployment |
+| `EASYPANEL_AUTH_MODE` | No | `bearer` (default) or `oauth` for HTTP mode |
+| `OAUTH_ISSUER_URL` | OAuth | Public MCP server URL used in OAuth metadata |
+| `OAUTH_STORE_PATH` | No | OAuth token store path |
 | `MCP_PROFILE` | No | `direct` (default) or `progressive` |
-| `MCP_API_KEY` | Recommended | Protects the MCP endpoint |
+| `MCP_API_KEY` | Bearer HTTP | Protects the MCP endpoint in bearer mode |
 | `MCP_ACCESS_MODE` | No | `full` (default) or `readonly` — blocks all mutations |
+| `CF_ACCESS_CLIENT_ID` / `CF_ACCESS_CLIENT_SECRET` | No | Cloudflare Access service token headers for backend EasyPanel calls |
+| `CF_ACCESS_TEAM_DOMAIN` / `CF_ACCESS_AUD` | No | Verify Cloudflare Access JWTs during OAuth authorization |
+| `CF_ACCESS_REQUIRE_EMAIL_MATCH` | No | Require OAuth EasyPanel email to match Cloudflare Access email |
 | `PORT` | No | HTTP port (default: 3000) |
 
 ## Generating a Permanent API Token
@@ -227,7 +237,7 @@ Your user now has an `"apiToken"` field — that's the permanent token. Set it a
 
 ## How It Works
 
-EasyPanel exposes a tRPC API at `/api/trpc/` and an OpenAPI export at `/api/openapi.json`. This fork keeps a typed registry of curated MCP tools, plus raw tRPC access for everything outside the curated surface.
+EasyPanel exposes a tRPC API at `/api/trpc/` and an OpenAPI export at `/api/openapi.json`. This fork keeps a typed registry of curated MCP tools, plus raw tRPC access for everything outside the curated surface. For EasyPanel **2.30.1**, project inventory is intentionally sanitized: `ep.list_projects` and the compatibility alias `ep.list_projects_services` return only `[{ project, services: [{ serviceName, ports? }] }]` and do not return env vars, tokens, passwords, API keys, source payloads, or commit metadata.
 
 In this fork, both the direct and progressive profiles are generated from the same typed registry. That registry drives:
 

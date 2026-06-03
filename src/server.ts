@@ -6,6 +6,7 @@ import {
   buildZodShape,
   createServerContext,
   directToolSpecs,
+  executeToolSpec,
 } from "./catalog.js";
 import {
   discoverCapabilities,
@@ -63,7 +64,7 @@ function registerDirectTools(server: McpServer, ctx: ReturnType<typeof createSer
       buildZodShape(toolSpec.input),
       async (args) => {
         try {
-          const data = await toolSpec.handler(ctx, args as Record<string, unknown>);
+          const data = await executeToolSpec(ctx, toolSpec, args as Record<string, unknown>);
           return ok(data);
         } catch (error) {
           return err(error);

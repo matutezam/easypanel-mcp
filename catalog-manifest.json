@@ -12,7 +12,7 @@
   "directTools": [
     {
       "toolName": "list_projects",
-      "description": "List all projects and their services",
+      "description": "List projects and services with a sanitized inventory shape",
       "operationKind": "read",
       "inputSchema": {
         "type": "object",
@@ -28,7 +28,8 @@
           "projects",
           "services",
           "inventory",
-          "overview"
+          "overview",
+          "ports"
         ],
         "aliases": [
           "ep.list_projects_services"
