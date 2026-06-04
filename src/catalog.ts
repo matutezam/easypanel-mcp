@@ -331,46 +331,36 @@ export function createServerContext(client: EasyPanelClient, readonly: boolean):
   };
 }
 
-function sanitizeProjectsAndServices(data: unknown, projectNameFilter?: unknown) {
+function filterProjectsAndServices(data: unknown, projectNameFilter?: unknown) {
   const filter = String(projectNameFilter || "").trim().toLowerCase();
+  if (!filter) return data;
 
   if (Array.isArray(data)) {
-    return filter
-      ? data.filter((row) => String((row as { project?: unknown }).project || "").toLowerCase() === filter)
-      : data;
+    return data.filter((row) => {
+      const typedRow = row as { project?: unknown; projectName?: unknown };
+      return String(typedRow.project ?? typedRow.projectName ?? "").toLowerCase() === filter;
+    });
   }
 
-  if (!data || typeof data !== "object") return [];
+  if (!data || typeof data !== "object") return data;
 
   const source = data as {
     projects?: Array<{ name?: string }>;
-    services?: Array<{ name?: string; projectName?: string; ports?: Array<{ published?: number | null }> }>;
+    services?: Array<{ projectName?: string }>;
+    [key: string]: unknown;
   };
 
-  if (!Array.isArray(source.projects) || !Array.isArray(source.services)) {
-    return [];
-  }
+  if (!Array.isArray(source.projects) && !Array.isArray(source.services)) return data;
 
-  const projects = source.projects;
-  const servicesList = source.services;
-
-  const rows = projects.map((project) => {
-    const services = servicesList
-      .filter((service) => service.projectName === project.name)
-      .map((service) => {
-        const ports = Array.isArray(service.ports)
-          ? service.ports.map((port) => port.published).filter((value) => value !== undefined && value !== null)
-          : [];
-        return {
-          serviceName: service.name,
-          ...(ports.length ? { ports } : {}),
-        };
-      });
-
-    return { project: project.name, services };
-  });
-
-  return filter ? rows.filter((row) => String(row.project || "").toLowerCase() === filter) : rows;
+  return {
+    ...source,
+    ...(Array.isArray(source.projects)
+      ? { projects: source.projects.filter((project) => String(project.name || "").toLowerCase() === filter) }
+      : {}),
+    ...(Array.isArray(source.services)
+      ? { services: source.services.filter((service) => String(service.projectName || "").toLowerCase() === filter) }
+      : {}),
+  };
 }
 
 function tool(
@@ -389,7 +379,7 @@ export const directToolSpecs: ToolSpec[] = [];
 directToolSpecs.push(
   tool(
     "list_projects",
-    "List projects and services with a sanitized inventory shape",
+    "List all projects and their services",
     noInput,
     "read",
     async (ctx) => ctx.query(projectProcedures.listProjectsAndServices),
@@ -397,10 +387,9 @@ directToolSpecs.push(
       category: "projects",
       keywords: ["project", "projects", "services", "inventory", "overview", "ports"],
       safetyClass: "safe",
-      summary: "List projects and services without exposing env, tokens, credentials, or source payloads.",
+      summary: "List projects and services. Sensitive fields are redacted at MCP response boundaries.",
       example: {},
       aliases: ["ep.list_projects_services"],
-      transformResult: (result, args) => sanitizeProjectsAndServices(result, args.projectName),
     },
   ),
   tool(
@@ -1344,8 +1333,8 @@ extraCapabilitySpecs.push(
     toolName: "list_projects",
     mode: "read",
     category: "projects",
-    summary: "List projects and services with exposed ports (sanitized).",
-    description: "Legacy alias for project/service inventory with a sanitized response shape.",
+    summary: "List projects and services with full EasyPanel inventory shape.",
+    description: "Legacy alias for project/service inventory. Sensitive fields are redacted at MCP response boundaries.",
     safetyClass: "safe",
     keywords: ["project", "projects", "services", "ports", "inventory"],
     example: { projectName: "sample-project" },
@@ -1358,7 +1347,7 @@ extraCapabilitySpecs.push(
       },
       additionalProperties: false,
     },
-    transformResult: (result, args) => sanitizeProjectsAndServices(result, args.projectName),
+    transformResult: (result, args) => filterProjectsAndServices(result, args.projectName),
   },
   {
     id: "ep.trpc_raw_read",

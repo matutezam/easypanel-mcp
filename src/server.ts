@@ -15,6 +15,7 @@ import {
   getCapabilitySchema,
   progressiveExternalTools,
 } from "./progressive.js";
+import { redactForModel, redactTextForModel } from "./redaction.js";
 
 export type McpProfile = "direct" | "progressive";
 
@@ -117,11 +118,11 @@ function registerProgressiveTools(server: McpServer, ctx: ReturnType<typeof crea
 }
 
 function ok(data: unknown): ToolResponse {
-  return { content: [{ type: "text", text: JSON.stringify(data, null, 2) }] };
+  return { content: [{ type: "text", text: JSON.stringify(redactForModel(data), null, 2) }] };
 }
 
 function err(error: unknown): ToolResponse {
-  const message = error instanceof Error ? error.message : String(error);
+  const message = redactTextForModel(error instanceof Error ? error.message : String(error));
   return {
     content: [{ type: "text", text: `Error: ${message}` }],
     isError: true,

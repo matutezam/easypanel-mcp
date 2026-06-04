@@ -12,7 +12,7 @@
   "directTools": [
     {
       "toolName": "list_projects",
-      "description": "List projects and services with a sanitized inventory shape",
+      "description": "List all projects and their services",
       "operationKind": "read",
       "inputSchema": {
         "type": "object",

@@ -237,7 +237,7 @@ Your user now has an `"apiToken"` field — that's the permanent token. Set it a
 
 ## How It Works
 
-EasyPanel exposes a tRPC API at `/api/trpc/` and an OpenAPI export at `/api/openapi.json`. This fork keeps a typed registry of curated MCP tools, plus raw tRPC access for everything outside the curated surface. For EasyPanel **2.30.1**, project inventory is intentionally sanitized: `ep.list_projects` and the compatibility alias `ep.list_projects_services` return only `[{ project, services: [{ serviceName, ports? }] }]` and do not return env vars, tokens, passwords, API keys, source payloads, or commit metadata.
+EasyPanel exposes a tRPC API at `/api/trpc/` and an OpenAPI export at `/api/openapi.json`. This fork keeps a typed registry of curated MCP tools, plus raw tRPC access for everything outside the curated surface. For EasyPanel **2.30.1**, `ep.list_projects` and the compatibility alias `ep.list_projects_services` keep the EasyPanel inventory shape, while all MCP responses pass through a global redaction boundary before reaching the model. Sensitive values such as tokens, passwords, API keys, bearer headers, and secret-like env vars are replaced with stable fingerprints like `[REDACTED:sha256:8f3a91c2]`.
 
 In this fork, both the direct and progressive profiles are generated from the same typed registry. That registry drives:
 

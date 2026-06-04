@@ -9,6 +9,7 @@ import {
   progressiveExternalTools,
 } from "../src/progressive.js";
 import { getServerHealth } from "../src/server.js";
+import { redactForModel, redactTextForModel } from "../src/redaction.js";
 
 function createFakeContext() {
   const calls: Array<{ kind: "query" | "mutate"; procedure: string; input?: Record<string, unknown> }> = [];
@@ -138,26 +139,65 @@ test("capability schema is generated from the catalog", () => {
   }
 });
 
-test("list_projects returns sanitized project/service inventory", async () => {
+test("list_projects returns the EasyPanel inventory shape before MCP boundary redaction", async () => {
   const { ctx } = createFakeContext();
   const result = await executeReadCapability(ctx, "ep.list_projects", "{}");
   assert.equal(result.ok, true);
   if (result.ok) {
-    assert.deepEqual(result.data, [{ project: "sample-project", services: [{ serviceName: "sample-service", ports: [3101] }] }]);
-    const serialized = JSON.stringify(result.data).toLowerCase();
-    for (const forbidden of ["env", "token", "password", "secret", "apikey", "commit"]) {
-      assert.ok(!serialized.includes(forbidden), `sanitized inventory leaked ${forbidden}`);
-    }
+    assert.deepEqual(result.data, {
+      projects: [{ name: "sample-project" }],
+      services: [
+        {
+          name: "sample-service",
+          projectName: "sample-project",
+          ports: [{ published: 3101 }],
+          env: "TOKEN=secret",
+          token: "secret-token",
+          password: "secret-password",
+          apiKey: "secret-api-key",
+          commit: { sha: "abc", message: "full payload" },
+        },
+      ],
+    });
   }
 });
 
-test("legacy list_projects_services alias returns sanitized data", async () => {
+test("legacy list_projects_services alias returns the same EasyPanel inventory shape", async () => {
   const { ctx } = createFakeContext();
   const result = await executeReadCapability(ctx, "ep.list_projects_services", "{\"projectName\":\"sample-project\"}");
   assert.equal(result.ok, true);
   if (result.ok) {
-    assert.deepEqual(result.data, [{ project: "sample-project", services: [{ serviceName: "sample-service", ports: [3101] }] }]);
+    assert.ok(!Array.isArray(result.data));
+    assert.deepEqual((result.data as { projects?: unknown }).projects, [{ name: "sample-project" }]);
   }
+});
+
+test("redactForModel masks structured secrets with stable sha256 fingerprints", () => {
+  const redacted = redactForModel({
+    token: "secret-token",
+    nested: { apiKey: "secret-api-key", password: "secret-password" },
+    env: "TOKEN=secret\nPORT=8000\nJIRA_API_TOKEN=abc123",
+    deploymentUrl: "https://panel.example/api/deploy/0123456789abcdef",
+  });
+  const serialized = JSON.stringify(redacted);
+
+  assert.ok(serialized.includes("PORT=8000"));
+  assert.ok(serialized.includes("[REDACTED:sha256:"));
+  assert.ok(!serialized.includes("secret-token"));
+  assert.ok(!serialized.includes("secret-api-key"));
+  assert.ok(!serialized.includes("secret-password"));
+  assert.ok(!serialized.includes("abc123"));
+  assert.ok(!serialized.includes("0123456789abcdef"));
+  assert.match(serialized, /\[REDACTED:sha256:[a-f0-9]{8}\]/);
+});
+
+test("redactTextForModel masks secrets embedded in logs", () => {
+  const redacted = redactTextForModel("Authorization: Bearer abcdefghijklmnop --build-arg JIRA_API_TOKEN=abc123");
+
+  assert.ok(!redacted.includes("abcdefghijklmnop"));
+  assert.ok(!redacted.includes("abc123"));
+  assert.match(redacted, /Bearer \[REDACTED:sha256:[a-f0-9]{8}\]/);
+  assert.match(redacted, /JIRA_API_TOKEN=\[REDACTED:sha256:[a-f0-9]{8}\]/);
 });
 
 test("write capability is blocked until approved", async () => {

@@ -73,7 +73,7 @@ Current fork assumption:
 - Service-specific procedures are expected under `services.*`.
 - Monitoring uses `monitorOld.getSystemStats`, `monitorOld.getServiceStats`, and `monitorOld.getStorageStats`; newer `metrics.*` procedures are intentionally out of this first correction.
 - Progressive discovery is catalog-based and versioned; it is not live runtime discovery from EasyPanel.
-- `ep.list_projects` and `ep.list_projects_services` return sanitized inventory only: project name, service name, and optional published ports.
+- `ep.list_projects` and `ep.list_projects_services` keep the EasyPanel inventory shape, but all MCP tool responses are redacted at the server boundary with stable `[REDACTED:sha256:<8hex>]` fingerprints for secret-like values.
 - The live panel's `/api/openapi.json` is the source of truth for compatibility checks.
 
 ## Mandatory Post-Upgrade Workflow
@@ -114,7 +114,7 @@ This prevents two common failures:
 Suggested smoke checks after sync:
 - `GET /health` returns `200` and expected `auth` state.
 - `ep_discover` returns relevant read capabilities.
-- `ep_execute_read ep.list_projects` returns sanitized inventory and does not expose secrets.
+- `ep_execute_read ep.list_projects` returns inventory data with secret-like values redacted as stable fingerprints and no raw secrets exposed.
 - `ep_execute_read ep.list_projects_services` remains compatible.
 - `ep_execute_read ep.system_stats`, `ep.service_stats`, and `ep.storage_stats` work against `monitorOld.*`.
 - `ep_execute_read ep.list_actions` still works.
