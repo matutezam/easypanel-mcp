@@ -47,7 +47,7 @@ export class EasyPanelClient {
     }
 
     try {
-      return await this.request("GET", this.buildRpcUrl(procedure, input, "flat"));
+      return await this.request("GET", this.buildRpcUrl(procedure));
     } catch (error) {
       if (!isNotFoundError(error)) throw error;
       return this.request("GET", this.buildTrpcQueryUrl(procedure, input));
