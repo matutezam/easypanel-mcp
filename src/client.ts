@@ -37,8 +37,16 @@ export class EasyPanelClient {
   }
 
   async query(procedure: string, input?: Record<string, unknown>): Promise<unknown> {
+    if (input && Object.keys(input).length) {
+      try {
+        return await this.request("GET", this.buildRpcUrl(procedure, input, "jsonBracket"));
+      } catch (error) {
+        if (!isInputEncodingFallbackError(error)) throw error;
+      }
+    }
+
     try {
-      return await this.request("GET", this.buildRpcUrl(procedure, input));
+      return await this.request("GET", this.buildRpcUrl(procedure, input, "flat"));
     } catch (error) {
       if (!isNotFoundError(error)) throw error;
       return this.request("GET", this.buildTrpcQueryUrl(procedure, input));
@@ -54,11 +62,11 @@ export class EasyPanelClient {
     }
   }
 
-  private buildRpcUrl(procedure: string, input?: Record<string, unknown>): string {
+  private buildRpcUrl(procedure: string, input?: Record<string, unknown>, inputEncoding: "flat" | "jsonBracket" = "flat"): string {
     const url = new URL(`${this.baseUrl}/api/rpc/${procedure.replace(/\./g, "/")}`);
     for (const [key, value] of Object.entries(input ?? {})) {
       if (value === undefined) continue;
-      url.searchParams.set(key, serializeQueryValue(value));
+      appendQueryValue(url.searchParams, inputEncoding === "jsonBracket" ? `json[${key}]` : key, value);
     }
     return url.toString();
   }
@@ -106,6 +114,8 @@ export class EasyPanelClient {
               reject(new EasyPanelApiError(errorInfo.message, errorInfo.code, errorInfo.status));
             } else if (json.result?.data?.json !== undefined) {
               resolve(json.result.data.json);
+            } else if (json.json !== undefined && Object.keys(json).every((key) => key === "json" || key === "meta")) {
+              resolve(json.json);
             } else {
               resolve(json);
             }
@@ -136,6 +146,11 @@ class EasyPanelApiError extends Error {
 }
 
 function extractApiError(json: any, httpStatus: number): { message: string; code?: string; status?: number } | undefined {
+  if (json?.json) {
+    const nested = extractApiError(json.json, httpStatus);
+    if (nested) return nested;
+  }
+
   if (json?.error) {
     return {
       message: json.error?.json?.message ?? json.error?.message ?? JSON.stringify(json.error),
@@ -170,9 +185,29 @@ function isNotFoundError(error: unknown): boolean {
   return error instanceof EasyPanelApiError && (error.status === 404 || error.code === "NOT_FOUND" || /not found/i.test(error.message));
 }
 
-function serializeQueryValue(value: unknown): string {
-  if (value === null) return "";
-  if (typeof value === "string") return value;
-  if (typeof value === "number" || typeof value === "boolean" || typeof value === "bigint") return String(value);
-  return JSON.stringify(value);
+function isInputEncodingFallbackError(error: unknown): boolean {
+  return isNotFoundError(error) || (
+    error instanceof EasyPanelApiError &&
+    (error.status === 400 || error.code === "BAD_REQUEST") &&
+    /input validation failed/i.test(error.message)
+  );
+}
+
+function appendQueryValue(params: URLSearchParams, key: string, value: unknown): void {
+  if (value === undefined) return;
+  if (value === null) {
+    params.set(key, "");
+    return;
+  }
+  if (Array.isArray(value)) {
+    for (const item of value) appendQueryValue(params, `${key}[]`, item);
+    return;
+  }
+  if (typeof value === "object") {
+    for (const [childKey, childValue] of Object.entries(value as Record<string, unknown>)) {
+      appendQueryValue(params, `${key}[${childKey}]`, childValue);
+    }
+    return;
+  }
+  params.set(key, String(value));
 }

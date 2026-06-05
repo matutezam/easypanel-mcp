@@ -26,17 +26,42 @@ function readBody(req: http.IncomingMessage): Promise<string> {
   });
 }
 
-test("query uses EasyPanel 2.31 oRPC path with flat query parameters", async () => {
+test("query uses EasyPanel 2.31 oRPC path with json bracket query parameters", async () => {
   await withServer((req, res) => {
     assert.equal(req.method, "GET");
-    assert.equal(req.url, "/api/rpc/actions/listActions?limit=8&projectName=sample-project");
+    assert.equal(req.url, "/api/rpc/actions/listActions?json%5Blimit%5D=8&json%5BprojectName%5D=sample-project");
     res.setHeader("Content-Type", "application/json");
-    res.end(JSON.stringify([{ id: "action-1" }]));
+    res.end(JSON.stringify({ json: [{ id: "action-1" }] }));
   }, async (baseUrl) => {
     const client = new EasyPanelClient(baseUrl, "token");
     const result = await client.query("actions.listActions", { limit: 8, projectName: "sample-project" });
     assert.deepEqual(result, [{ id: "action-1" }]);
   });
+});
+
+test("query falls back to flat oRPC parameters if json bracket encoding is rejected", async () => {
+  const seen: string[] = [];
+  await withServer((req, res) => {
+    seen.push(`${req.method} ${req.url}`);
+    res.setHeader("Content-Type", "application/json");
+    if (req.url?.includes("json%5B")) {
+      res.statusCode = 400;
+      res.end(JSON.stringify({ json: { defined: false, code: "BAD_REQUEST", status: 400, message: "Input validation failed" } }));
+      return;
+    }
+
+    assert.equal(req.url, "/api/rpc/actions/listActions?limit=8");
+    res.end(JSON.stringify({ json: [{ id: "action-1" }] }));
+  }, async (baseUrl) => {
+    const client = new EasyPanelClient(baseUrl, "token");
+    const result = await client.query("actions.listActions", { limit: 8 });
+    assert.deepEqual(result, [{ id: "action-1" }]);
+  });
+
+  assert.deepEqual(seen, [
+    "GET /api/rpc/actions/listActions?json%5Blimit%5D=8",
+    "GET /api/rpc/actions/listActions?limit=8",
+  ]);
 });
 
 test("mutation uses EasyPanel 2.31 oRPC path with json request body", async () => {
@@ -45,7 +70,7 @@ test("mutation uses EasyPanel 2.31 oRPC path with json request body", async () =
     assert.equal(req.url, "/api/rpc/services/app/createService");
     assert.deepEqual(JSON.parse(await readBody(req)), { json: { projectName: "sample-project", serviceName: "web" } });
     res.setHeader("Content-Type", "application/json");
-    res.end(JSON.stringify({ ok: true }));
+    res.end(JSON.stringify({ json: { ok: true } }));
   }, async (baseUrl) => {
     const client = new EasyPanelClient(baseUrl, "token");
     const result = await client.mutation("services.app.createService", {
@@ -103,6 +128,20 @@ test("client rejects embedded EasyPanel validation errors", async () => {
   await withServer((_, res) => {
     res.setHeader("Content-Type", "application/json");
     res.end(JSON.stringify({ defined: false, code: "BAD_REQUEST", status: 400, message: "Input validation failed" }));
+  }, async (baseUrl) => {
+    const client = new EasyPanelClient(baseUrl, "token");
+    await assert.rejects(
+      () => client.query("actions.listActions", { limit: 8 }),
+      /EasyPanel API error: Input validation failed/,
+    );
+  });
+});
+
+test("client rejects nested json EasyPanel validation errors", async () => {
+  await withServer((_, res) => {
+    res.statusCode = 400;
+    res.setHeader("Content-Type", "application/json");
+    res.end(JSON.stringify({ json: { defined: false, code: "BAD_REQUEST", status: 400, message: "Input validation failed" } }));
   }, async (baseUrl) => {
     const client = new EasyPanelClient(baseUrl, "token");
     await assert.rejects(
