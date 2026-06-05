@@ -2,9 +2,9 @@
 
 MCP server for [EasyPanel](https://easypanel.io) — manage your server, projects, services, databases, and domains through any MCP-compatible AI agent (Claude, Cursor, etc.).
 
-**58 direct tools** or **4 progressive wrapper tools** backed by **59 discoverable capabilities**, plus raw tRPC access to the rest of the EasyPanel API.
+**58 direct tools** or **4 progressive wrapper tools** backed by **59 discoverable capabilities**, plus raw EasyPanel RPC access to the rest of the EasyPanel API.
 
-This fork currently targets EasyPanel **2.30.1**, where service-specific tRPC procedures live under `services.*` and legacy monitoring procedures are exposed under `monitorOld.*`.
+This fork currently targets EasyPanel **2.31.0**, where EasyPanel migrated the API from tRPC to oRPC while keeping backward compatibility. The MCP client prefers `/api/rpc/...` and falls back to `/api/trpc/...` for older panels. Service-specific procedures live under `services.*` and legacy monitoring procedures are exposed under `monitorOld.*`.
 
 ## 🚀 Quick Setup (Deploy on EasyPanel)
 
@@ -13,7 +13,7 @@ The easiest way — deploy the MCP server as a service on your own EasyPanel:
 ### 1. Get your API token
 
 ```bash
-curl -X POST https://YOUR_PANEL:3000/api/trpc/auth.login \
+curl -X POST https://YOUR_PANEL:3000/api/rpc/auth/login \
   -H "Content-Type: application/json" \
   -d '{"json":{"email":"you@email.com","password":"your-pass"}}'
 ```
@@ -172,7 +172,7 @@ You can also point it at a saved spec with `OPENAPI_FILE=path/to/openapi.json`.
 `cleanup_docker` · `system_prune` · `restart_panel` · `reboot_server` · `list_users` · `list_certificates` · `list_nodes` · `deploy_template`
 
 ### Escape Hatch
-`trpc_raw` — escape hatch to call EasyPanel tRPC procedures directly. Use carefully: raw calls can expose sensitive response data if the chosen procedure returns credentials, env vars, tokens, source metadata, or other secrets.
+`trpc_raw` — compatibility escape hatch to call EasyPanel RPC procedures directly by operation id. Use carefully: raw calls can expose sensitive response data if the chosen procedure returns credentials, env vars, tokens, source metadata, or other secrets.
 
 ## 🔒 Security
 
@@ -209,7 +209,7 @@ Session tokens from `auth.login` expire in 30 days. For a permanent token:
 **Step 1.** Get your user ID:
 
 ```bash
-curl -s "https://YOUR_PANEL:3000/api/trpc/users.listUsers" \
+curl -s "https://YOUR_PANEL:3000/api/rpc/users/listUsers" \
   -H "Authorization: Bearer YOUR_SESSION_TOKEN"
 ```
 
@@ -218,7 +218,7 @@ Find your email in the response and copy the `"id"` field.
 **Step 2.** Generate the permanent token:
 
 ```bash
-curl -s -X POST "https://YOUR_PANEL:3000/api/trpc/users.generateApiToken" \
+curl -s -X POST "https://YOUR_PANEL:3000/api/rpc/users/generateApiToken" \
   -H "Authorization: Bearer YOUR_SESSION_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{"json":{"id":"YOUR_USER_ID"}}'
@@ -227,7 +227,7 @@ curl -s -X POST "https://YOUR_PANEL:3000/api/trpc/users.generateApiToken" \
 **Step 3.** Retrieve the token — list users again:
 
 ```bash
-curl -s "https://YOUR_PANEL:3000/api/trpc/users.listUsers" \
+curl -s "https://YOUR_PANEL:3000/api/rpc/users/listUsers" \
   -H "Authorization: Bearer YOUR_SESSION_TOKEN"
 ```
 
@@ -237,7 +237,7 @@ Your user now has an `"apiToken"` field — that's the permanent token. Set it a
 
 ## How It Works
 
-EasyPanel exposes a tRPC API at `/api/trpc/` and an OpenAPI export at `/api/openapi.json`. This fork keeps a typed registry of curated MCP tools, plus raw tRPC access for everything outside the curated surface. For EasyPanel **2.30.1**, `ep.list_projects` and the compatibility alias `ep.list_projects_services` keep the EasyPanel inventory shape, while all MCP responses pass through a global redaction boundary before reaching the model. Sensitive values such as tokens, passwords, API keys, bearer headers, and secret-like env vars are replaced with stable fingerprints like `[REDACTED:sha256:8f3a91c2]`.
+EasyPanel exposes an oRPC API at `/api/rpc/`, a legacy-compatible tRPC API at `/api/trpc/`, and an OpenAPI export at `/api/openapi.json`. This fork keeps a typed registry of curated MCP tools, plus raw RPC access for everything outside the curated surface. For EasyPanel **2.31.0**, the client sends query inputs as flat `/api/rpc/...` query parameters, sends mutation inputs as `{ "json": ... }`, and falls back to `/api/trpc/...` only when the new route is unavailable. `ep.list_projects` and the compatibility alias `ep.list_projects_services` keep the EasyPanel inventory shape, while all MCP responses pass through a global redaction boundary before reaching the model. Sensitive values such as tokens, passwords, API keys, two-factor secrets, bearer headers, and secret-like env vars are replaced with stable fingerprints like `[REDACTED:sha256:8f3a91c2]`.
 
 In this fork, both the direct and progressive profiles are generated from the same typed registry. That registry drives:
 
@@ -249,7 +249,7 @@ In this fork, both the direct and progressive profiles are generated from the sa
 
 ## Disclaimer
 
-This tool communicates with EasyPanel's public tRPC API. Some EasyPanel features may require a valid license. Please respect [EasyPanel's licensing terms](https://easypanel.io/pricing). This project is not affiliated with or endorsed by EasyPanel.
+This tool communicates with EasyPanel's public RPC API. Some EasyPanel features may require a valid license. Please respect [EasyPanel's licensing terms](https://easypanel.io/pricing). This project is not affiliated with or endorsed by EasyPanel.
 
 ## License
 

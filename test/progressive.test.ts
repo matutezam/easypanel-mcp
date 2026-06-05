@@ -65,7 +65,7 @@ test("capability ids are unique", () => {
   assert.equal(new Set(ids).size, ids.length);
 });
 
-test("catalog procedure registry matches the EasyPanel 2.30.1 service namespace layout", () => {
+test("catalog procedure registry matches the EasyPanel 2.31.0 service namespace layout", () => {
   assert.equal(new Set(catalogProcedureNames).size, catalogProcedureNames.length);
   assert.ok(catalogProcedureNames.includes("services.common.getNotes"));
   assert.ok(catalogProcedureNames.includes("services.app.inspectService"));
@@ -175,8 +175,13 @@ test("legacy list_projects_services alias returns the same EasyPanel inventory s
 test("redactForModel masks structured secrets with stable sha256 fingerprints", () => {
   const redacted = redactForModel({
     token: "secret-token",
-    nested: { apiKey: "secret-api-key", password: "secret-password" },
-    env: "TOKEN=secret\nPORT=8000\nJIRA_API_TOKEN=abc123",
+    nested: {
+      apiKey: "secret-api-key",
+      apiToken: "secret-api-token",
+      password: "secret-password",
+      twoFactorSecret: "secret-2fa",
+    },
+    env: "TOKEN=secret\nPORT=8000\nJIRA_API_TOKEN=abc123\nTWO_FACTOR_SECRET=def456",
     deploymentUrl: "https://panel.example/api/deploy/0123456789abcdef",
   });
   const serialized = JSON.stringify(redacted);
@@ -185,8 +190,11 @@ test("redactForModel masks structured secrets with stable sha256 fingerprints", 
   assert.ok(serialized.includes("[REDACTED:sha256:"));
   assert.ok(!serialized.includes("secret-token"));
   assert.ok(!serialized.includes("secret-api-key"));
+  assert.ok(!serialized.includes("secret-api-token"));
   assert.ok(!serialized.includes("secret-password"));
+  assert.ok(!serialized.includes("secret-2fa"));
   assert.ok(!serialized.includes("abc123"));
+  assert.ok(!serialized.includes("def456"));
   assert.ok(!serialized.includes("0123456789abcdef"));
   assert.match(serialized, /\[REDACTED:sha256:[a-f0-9]{8}\]/);
 });
@@ -210,6 +218,29 @@ test("write capability is blocked until approved", async () => {
     reason: "write_requires_approved_true",
   });
   assert.equal(calls.length, 0);
+});
+
+test("progressive execution surfaces embedded EasyPanel API errors as failures", async () => {
+  const calls: Array<{ kind: "query" | "mutate"; procedure: string; input?: Record<string, unknown> }> = [];
+  const ctx = {
+    client: {} as never,
+    readonly: false,
+    async query(procedure: string, input?: Record<string, unknown>) {
+      calls.push({ kind: "query", procedure, input });
+      return { defined: false, code: "BAD_REQUEST", status: 400, message: "Input validation failed" };
+    },
+    async mutate(procedure: string, input?: Record<string, unknown>) {
+      calls.push({ kind: "mutate", procedure, input });
+      return { procedure, input };
+    },
+  };
+
+  const result = await executeReadCapability(ctx, "ep.list_actions", "{\"limit\":8}");
+  assert.deepEqual(result, {
+    ok: false,
+    capabilityId: "ep.list_actions",
+    error: "EasyPanel API error: Input validation failed",
+  });
 });
 
 test("approved write capability dispatches to the direct handler", async () => {

@@ -69,7 +69,8 @@ To avoid breakage:
 3. Add a smoke checklist for both `readonly` and `full` modes.
 
 Current fork assumption:
-- EasyPanel `2.30.1` is the target baseline.
+- EasyPanel `2.31.0` is the target baseline.
+- EasyPanel `2.31.0` migrated from tRPC to oRPC while keeping compatibility; the MCP client prefers `/api/rpc/...` and falls back to `/api/trpc/...` only when the new route is unavailable.
 - Service-specific procedures are expected under `services.*`.
 - Monitoring uses `monitorOld.getSystemStats`, `monitorOld.getServiceStats`, and `monitorOld.getStorageStats`; newer `metrics.*` procedures are intentionally out of this first correction.
 - Progressive discovery is catalog-based and versioned; it is not live runtime discovery from EasyPanel.
@@ -90,6 +91,7 @@ EASYPANEL_URL=http://your-easypanel-host:3000 EASYPANEL_TOKEN=your-token npm run
 
 Interpretation:
 - If `audit:openapi` passes, the curated catalog still matches the live EasyPanel API surface.
+- Also run live read smoke checks for input-dependent capabilities. `audit:openapi` only proves operation ids exist; after the oRPC migration, input encoding can still drift.
 - If `audit:openapi` fails, patch the fork before deploying:
   - update [src/catalog.ts](./src/catalog.ts)
   - update [src/progressive.ts](./src/progressive.ts) if discovery keywords/categories changed

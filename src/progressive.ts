@@ -302,6 +302,14 @@ async function runCapability(
   try {
     const mappedArgs = capability.mapArgs ? capability.mapArgs(args) : args;
     const result = await executeToolSpec(ctx, toolSpec, mappedArgs);
+    const embeddedError = extractEmbeddedError(result);
+    if (embeddedError) {
+      return {
+        ok: false,
+        capabilityId: capability.id,
+        error: embeddedError,
+      };
+    }
     return {
       ok: true,
       capabilityId: capability.id,
@@ -314,6 +322,20 @@ async function runCapability(
       error: error instanceof Error ? error.message : String(error),
     };
   }
+}
+
+function extractEmbeddedError(result: unknown): string | undefined {
+  if (!result || typeof result !== "object" || Array.isArray(result)) return undefined;
+  const record = result as Record<string, unknown>;
+  const status = typeof record.status === "number" ? record.status : undefined;
+  const code = typeof record.code === "string" ? record.code : undefined;
+  const message = typeof record.message === "string" ? record.message : undefined;
+
+  if ((status && status >= 400) || code === "BAD_REQUEST" || record.defined === false) {
+    return message ? `EasyPanel API error: ${message}` : `EasyPanel API error: ${JSON.stringify(result)}`;
+  }
+
+  return undefined;
 }
 
 function buildFallbackCandidates(candidates: CapabilitySpec[]): CapabilitySpec[] {

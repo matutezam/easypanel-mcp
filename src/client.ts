@@ -37,16 +37,38 @@ export class EasyPanelClient {
   }
 
   async query(procedure: string, input?: Record<string, unknown>): Promise<unknown> {
+    try {
+      return await this.request("GET", this.buildRpcUrl(procedure, input));
+    } catch (error) {
+      if (!isNotFoundError(error)) throw error;
+      return this.request("GET", this.buildTrpcQueryUrl(procedure, input));
+    }
+  }
+
+  async mutation(procedure: string, input: Record<string, unknown>): Promise<any> {
+    try {
+      return await this.request("POST", this.buildRpcUrl(procedure), { json: input });
+    } catch (error) {
+      if (!isNotFoundError(error)) throw error;
+      return this.request("POST", `${this.baseUrl}/api/trpc/${procedure}`, { json: input });
+    }
+  }
+
+  private buildRpcUrl(procedure: string, input?: Record<string, unknown>): string {
+    const url = new URL(`${this.baseUrl}/api/rpc/${procedure.replace(/\./g, "/")}`);
+    for (const [key, value] of Object.entries(input ?? {})) {
+      if (value === undefined) continue;
+      url.searchParams.set(key, serializeQueryValue(value));
+    }
+    return url.toString();
+  }
+
+  private buildTrpcQueryUrl(procedure: string, input?: Record<string, unknown>): string {
     let url = `${this.baseUrl}/api/trpc/${procedure}`;
     if (input) {
       url += `?input=${encodeURIComponent(JSON.stringify({ json: input }))}`;
     }
-    return this.request("GET", url);
-  }
-
-  async mutation(procedure: string, input: Record<string, unknown>): Promise<any> {
-    const url = `${this.baseUrl}/api/trpc/${procedure}`;
-    return this.request("POST", url, { json: input });
+    return url;
   }
 
   private fireAuthFailure(): void {
@@ -76,16 +98,12 @@ export class EasyPanelClient {
           const httpAuthFailed = status === 401 || status === 403;
           try {
             const json = JSON.parse(data);
-            const trpcCode =
-              json?.error?.json?.data?.code ??
-              json?.error?.data?.code ??
-              json?.error?.code;
-            const trpcAuthFailed = trpcCode === "UNAUTHORIZED" || trpcCode === "FORBIDDEN";
-            if (httpAuthFailed || trpcAuthFailed) this.fireAuthFailure();
+            const errorInfo = extractApiError(json, status);
+            const apiAuthFailed = errorInfo?.code === "UNAUTHORIZED" || errorInfo?.code === "FORBIDDEN";
+            if (httpAuthFailed || apiAuthFailed) this.fireAuthFailure();
 
-            if (json.error) {
-              const msg = json.error?.json?.message ?? json.error?.message ?? JSON.stringify(json.error);
-              reject(new Error(`tRPC error: ${msg}`));
+            if (errorInfo) {
+              reject(new EasyPanelApiError(errorInfo.message, errorInfo.code, errorInfo.status));
             } else if (json.result?.data?.json !== undefined) {
               resolve(json.result.data.json);
             } else {
@@ -93,7 +111,13 @@ export class EasyPanelClient {
             }
           } catch {
             if (httpAuthFailed) this.fireAuthFailure();
-            reject(new Error(`Invalid response: ${data.slice(0, 500)}`));
+            if (status === 404) {
+              reject(new EasyPanelApiError("Not found", "NOT_FOUND", 404));
+            } else if (status >= 400) {
+              reject(new EasyPanelApiError(data.slice(0, 500) || `HTTP ${status}`, undefined, status));
+            } else {
+              reject(new Error(`Invalid response: ${data.slice(0, 500)}`));
+            }
           }
         });
       });
@@ -102,4 +126,53 @@ export class EasyPanelClient {
       req.end();
     });
   }
+}
+
+class EasyPanelApiError extends Error {
+  constructor(message: string, public code?: string, public status?: number) {
+    super(`EasyPanel API error: ${message}`);
+    this.name = "EasyPanelApiError";
+  }
+}
+
+function extractApiError(json: any, httpStatus: number): { message: string; code?: string; status?: number } | undefined {
+  if (json?.error) {
+    return {
+      message: json.error?.json?.message ?? json.error?.message ?? JSON.stringify(json.error),
+      code: json.error?.json?.data?.code ?? json.error?.data?.code ?? json.error?.code,
+      status: json.error?.json?.data?.httpStatus ?? json.error?.data?.httpStatus ?? httpStatus,
+    };
+  }
+
+  const embeddedStatus = typeof json?.status === "number" ? json.status : undefined;
+  const embeddedCode = typeof json?.code === "string" ? json.code : undefined;
+  const embeddedMessage = typeof json?.message === "string" ? json.message : undefined;
+  if ((embeddedStatus && embeddedStatus >= 400) || embeddedCode === "BAD_REQUEST" || json?.defined === false) {
+    return {
+      message: embeddedMessage ?? JSON.stringify(json),
+      code: embeddedCode,
+      status: embeddedStatus ?? httpStatus,
+    };
+  }
+
+  if (httpStatus >= 400) {
+    return {
+      message: embeddedMessage ?? JSON.stringify(json),
+      code: embeddedCode,
+      status: httpStatus,
+    };
+  }
+
+  return undefined;
+}
+
+function isNotFoundError(error: unknown): boolean {
+  return error instanceof EasyPanelApiError && (error.status === 404 || error.code === "NOT_FOUND" || /not found/i.test(error.message));
+}
+
+function serializeQueryValue(value: unknown): string {
+  if (value === null) return "";
+  if (typeof value === "string") return value;
+  if (typeof value === "number" || typeof value === "boolean" || typeof value === "bigint") return String(value);
+  return JSON.stringify(value);
 }

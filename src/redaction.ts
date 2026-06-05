@@ -2,9 +2,26 @@ import { createHash } from "node:crypto";
 
 const REDACTION_PREFIX = "[REDACTED:sha256:";
 
-const sensitiveKeyPattern = /(?:^|[_-])(token|password|passwd|pwd|secret|api[_-]?key|apikey|authorization|auth[_-]?token|access[_-]?key|private[_-]?key|client[_-]?secret|refresh[_-]?token|access[_-]?token)(?:$|[_-])/i;
 const envAssignmentPattern = /^([A-Za-z_][A-Za-z0-9_]*)(\s*=\s*)(.*)$/;
-const sensitiveEnvNamePattern = /(TOKEN|PASSWORD|PASSWD|PWD|SECRET|API_?KEY|AUTHORIZATION|ACCESS_?KEY|PRIVATE_?KEY|CLIENT_?SECRET|REFRESH_?TOKEN|ACCESS_?TOKEN)/i;
+const sensitiveEnvNamePattern = /(TOKEN|PASSWORD|PASSWD|PWD|SECRET|API_?KEY|AUTHORIZATION|ACCESS_?KEY|PRIVATE_?KEY|CLIENT_?SECRET|REFRESH_?TOKEN|ACCESS_?TOKEN|TWO_?FACTOR|MFA|2FA)/i;
+const sensitiveKeyFragments = [
+  "token",
+  "password",
+  "passwd",
+  "pwd",
+  "secret",
+  "apikey",
+  "authorization",
+  "accesstoken",
+  "refreshtoken",
+  "authtoken",
+  "accesskey",
+  "privatekey",
+  "clientsecret",
+  "twofactor",
+  "mfa",
+  "2fa",
+];
 
 export function redactForModel<T>(value: T): T {
   return redactValue(value, []) as T;
@@ -59,7 +76,9 @@ function redactSensitiveLeaf(value: unknown): unknown {
 }
 
 function isSensitiveKey(key: string): boolean {
-  return sensitiveKeyPattern.test(key);
+  const normalized = key.replace(/[^a-z0-9]/gi, "").toLowerCase();
+  if (normalized === "key") return true;
+  return sensitiveKeyFragments.some((fragment) => normalized.includes(fragment));
 }
 
 function redactEnvBlock(value: string): string {
@@ -84,7 +103,7 @@ function redactFreeText(value: string): string {
   );
 
   redacted = redacted.replace(
-    /((?:--build-arg\s+)?[A-Z0-9_]*(?:TOKEN|PASSWORD|PASSWD|PWD|SECRET|API_?KEY|AUTHORIZATION|ACCESS_?KEY|PRIVATE_?KEY|CLIENT_?SECRET|REFRESH_?TOKEN|ACCESS_?TOKEN)[A-Z0-9_]*\s*=\s*)(['"]?)([^'"\s]+)(\2)/gi,
+    /((?:--build-arg\s+)?[A-Z0-9_]*(?:TOKEN|PASSWORD|PASSWD|PWD|SECRET|API_?KEY|AUTHORIZATION|ACCESS_?KEY|PRIVATE_?KEY|CLIENT_?SECRET|REFRESH_?TOKEN|ACCESS_?TOKEN|TWO_?FACTOR|MFA|2FA)[A-Z0-9_]*\s*=\s*)(['"]?)([^'"\s]+)(\2)/gi,
     (_match, prefix: string, quote: string, secret: string, closeQuote: string) => `${prefix}${quote}${fingerprint(secret)}${closeQuote}`,
   );
 
