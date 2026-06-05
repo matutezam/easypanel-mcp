@@ -39,9 +39,10 @@ export class EasyPanelClient {
   async query(procedure: string, input?: Record<string, unknown>): Promise<unknown> {
     if (input && Object.keys(input).length) {
       try {
-        return await this.request("GET", this.buildRpcUrl(procedure, input, "jsonBracket"));
+        return await this.request("POST", this.buildRpcUrl(procedure), { json: input });
       } catch (error) {
-        if (!isInputEncodingFallbackError(error)) throw error;
+        if (!isNotFoundError(error)) throw error;
+        return this.request("POST", `${this.baseUrl}/api/trpc/${procedure}`, { json: input });
       }
     }
 
@@ -62,11 +63,11 @@ export class EasyPanelClient {
     }
   }
 
-  private buildRpcUrl(procedure: string, input?: Record<string, unknown>, inputEncoding: "flat" | "jsonBracket" = "flat"): string {
+  private buildRpcUrl(procedure: string, input?: Record<string, unknown>): string {
     const url = new URL(`${this.baseUrl}/api/rpc/${procedure.replace(/\./g, "/")}`);
     for (const [key, value] of Object.entries(input ?? {})) {
       if (value === undefined) continue;
-      appendQueryValue(url.searchParams, inputEncoding === "jsonBracket" ? `json[${key}]` : key, value);
+      appendQueryValue(url.searchParams, key, value);
     }
     return url.toString();
   }
@@ -183,14 +184,6 @@ function extractApiError(json: any, httpStatus: number): { message: string; code
 
 function isNotFoundError(error: unknown): boolean {
   return error instanceof EasyPanelApiError && (error.status === 404 || error.code === "NOT_FOUND" || /not found/i.test(error.message));
-}
-
-function isInputEncodingFallbackError(error: unknown): boolean {
-  return isNotFoundError(error) || (
-    error instanceof EasyPanelApiError &&
-    (error.status === 400 || error.code === "BAD_REQUEST") &&
-    /input validation failed/i.test(error.message)
-  );
 }
 
 function appendQueryValue(params: URLSearchParams, key: string, value: unknown): void {

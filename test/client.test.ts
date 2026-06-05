@@ -26,10 +26,11 @@ function readBody(req: http.IncomingMessage): Promise<string> {
   });
 }
 
-test("query uses EasyPanel 2.31 oRPC path with json bracket query parameters", async () => {
-  await withServer((req, res) => {
-    assert.equal(req.method, "GET");
-    assert.equal(req.url, "/api/rpc/actions/listActions?json%5Blimit%5D=8&json%5BprojectName%5D=sample-project");
+test("query with input uses EasyPanel 2.31 oRPC path with json request body", async () => {
+  await withServer(async (req, res) => {
+    assert.equal(req.method, "POST");
+    assert.equal(req.url, "/api/rpc/actions/listActions");
+    assert.deepEqual(JSON.parse(await readBody(req)), { json: { limit: 8, projectName: "sample-project" } });
     res.setHeader("Content-Type", "application/json");
     res.end(JSON.stringify({ json: [{ id: "action-1" }] }));
   }, async (baseUrl) => {
@@ -39,19 +40,21 @@ test("query uses EasyPanel 2.31 oRPC path with json bracket query parameters", a
   });
 });
 
-test("query falls back to flat oRPC parameters if json bracket encoding is rejected", async () => {
+test("query with input falls back to legacy tRPC POST when oRPC route is not found", async () => {
   const seen: string[] = [];
-  await withServer((req, res) => {
+  await withServer(async (req, res) => {
     seen.push(`${req.method} ${req.url}`);
     res.setHeader("Content-Type", "application/json");
-    if (req.url?.includes("json%5B")) {
-      res.statusCode = 400;
-      res.end(JSON.stringify({ json: { defined: false, code: "BAD_REQUEST", status: 400, message: "Input validation failed" } }));
+    if (req.url?.startsWith("/api/rpc/")) {
+      assert.deepEqual(JSON.parse(await readBody(req)), { json: { limit: 8 } });
+      res.statusCode = 404;
+      res.end(JSON.stringify({ code: "NOT_FOUND", status: 404, message: "Not found" }));
       return;
     }
 
-    assert.equal(req.url, "/api/rpc/actions/listActions?limit=8");
-    res.end(JSON.stringify({ json: [{ id: "action-1" }] }));
+    assert.equal(req.url, "/api/trpc/actions.listActions");
+    assert.deepEqual(JSON.parse(await readBody(req)), { json: { limit: 8 } });
+    res.end(JSON.stringify({ result: { data: { json: [{ id: "action-1" }] } } }));
   }, async (baseUrl) => {
     const client = new EasyPanelClient(baseUrl, "token");
     const result = await client.query("actions.listActions", { limit: 8 });
@@ -59,8 +62,8 @@ test("query falls back to flat oRPC parameters if json bracket encoding is rejec
   });
 
   assert.deepEqual(seen, [
-    "GET /api/rpc/actions/listActions?json%5Blimit%5D=8",
-    "GET /api/rpc/actions/listActions?limit=8",
+    "POST /api/rpc/actions/listActions",
+    "POST /api/trpc/actions.listActions",
   ]);
 });
 
