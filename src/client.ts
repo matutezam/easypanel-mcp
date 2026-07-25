@@ -37,19 +37,15 @@ export class EasyPanelClient {
   }
 
   async query(procedure: string, input?: Record<string, unknown>): Promise<unknown> {
-    if (input && Object.keys(input).length) {
-      try {
-        return await this.request("POST", this.buildRpcUrl(procedure), { json: input });
-      } catch (error) {
-        if (!isNotFoundError(error)) throw error;
-        return this.request("POST", `${this.baseUrl}/api/trpc/${procedure}`, { json: input });
-      }
-    }
+    const hasInput = Boolean(input && Object.keys(input).length);
 
     try {
-      return await this.request("GET", this.buildRpcUrl(procedure));
+      return await this.request("POST", this.buildRpcUrl(procedure), { json: input ?? {} });
     } catch (error) {
       if (!isNotFoundError(error)) throw error;
+      if (hasInput) {
+        return this.request("POST", `${this.baseUrl}/api/trpc/${procedure}`, { json: input });
+      }
       return this.request("GET", this.buildTrpcQueryUrl(procedure, input));
     }
   }

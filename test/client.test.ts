@@ -40,6 +40,26 @@ test("query with input uses EasyPanel 2.31 oRPC path with json request body", as
   });
 });
 
+test("query without input uses EasyPanel 2.32 oRPC POST with an empty json request body", async () => {
+  let seenMethod: string | undefined;
+  let seenUrl: string | undefined;
+  let seenBody = "";
+  await withServer(async (req, res) => {
+    seenMethod = req.method;
+    seenUrl = req.url;
+    seenBody = await readBody(req);
+    res.setHeader("Content-Type", "application/json");
+    res.end(JSON.stringify({ json: { projects: [] } }));
+  }, async (baseUrl) => {
+    const client = new EasyPanelClient(baseUrl, "token");
+    const result = await client.query("projects.listProjectsAndServices");
+    assert.deepEqual(result, { projects: [] });
+  });
+  assert.equal(seenMethod, "POST");
+  assert.equal(seenUrl, "/api/rpc/projects/listProjectsAndServices");
+  assert.deepEqual(JSON.parse(seenBody), { json: {} });
+});
+
 test("query with input falls back to legacy tRPC POST when oRPC route is not found", async () => {
   const seen: string[] = [];
   await withServer(async (req, res) => {
@@ -84,12 +104,13 @@ test("mutation uses EasyPanel 2.31 oRPC path with json request body", async () =
   });
 });
 
-test("client falls back to legacy tRPC when oRPC route is not found", async () => {
+test("query without input falls back to legacy tRPC GET when oRPC route is not found", async () => {
   const seen: string[] = [];
-  await withServer((req, res) => {
+  await withServer(async (req, res) => {
     seen.push(`${req.method} ${req.url}`);
     res.setHeader("Content-Type", "application/json");
     if (req.url?.startsWith("/api/rpc/")) {
+      assert.deepEqual(JSON.parse(await readBody(req)), { json: {} });
       res.statusCode = 404;
       res.end(JSON.stringify({ code: "NOT_FOUND", status: 404, message: "Not found" }));
       return;
@@ -104,7 +125,7 @@ test("client falls back to legacy tRPC when oRPC route is not found", async () =
   });
 
   assert.deepEqual(seen, [
-    "GET /api/rpc/projects/listProjectsAndServices",
+    "POST /api/rpc/projects/listProjectsAndServices",
     "GET /api/trpc/projects.listProjectsAndServices",
   ]);
 });
