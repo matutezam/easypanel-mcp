@@ -30,6 +30,43 @@ type ToolResponse = {
   isError?: true;
 };
 
+export const progressiveToolMetadata = {
+  ep_discover: {
+    title: "Discover EasyPanel capabilities",
+    description: "Discover a short list of relevant EasyPanel capabilities based on intent and risk.",
+    annotations: {
+      readOnlyHint: true,
+      openWorldHint: false,
+    },
+  },
+  ep_capability_schema: {
+    title: "Get EasyPanel capability schema",
+    description: "Return full input schema and usage examples for one capabilityId.",
+    annotations: {
+      readOnlyHint: true,
+      openWorldHint: false,
+    },
+  },
+  ep_execute_read: {
+    title: "Read from EasyPanel",
+    description: "Execute approved read-only capabilities.",
+    annotations: {
+      readOnlyHint: true,
+      openWorldHint: true,
+    },
+  },
+  ep_execute_write_guarded: {
+    title: "Write to EasyPanel (guarded)",
+    description: "Execute write capability only when approved=true. Otherwise returns blocked response.",
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: true,
+      idempotentHint: false,
+      openWorldHint: true,
+    },
+  },
+} as const;
+
 export function createServerFactory(deps: ServerDependencies): () => McpServer {
   return () => createMcpServer(deps);
 }
@@ -76,42 +113,50 @@ function registerDirectTools(server: McpServer, ctx: ReturnType<typeof createSer
 }
 
 function registerProgressiveTools(server: McpServer, ctx: ReturnType<typeof createServerContext>) {
-  server.tool(
+  server.registerTool(
     "ep_discover",
-    "Discover a short list of relevant EasyPanel capabilities based on intent and risk.",
     {
-      intent: z.string().optional().describe("What user wants to do in EasyPanel."),
-      risk: z.enum(["read", "write"]).optional().describe("Use read or write."),
+      ...progressiveToolMetadata.ep_discover,
+      inputSchema: {
+        intent: z.string().optional().describe("What user wants to do in EasyPanel."),
+        risk: z.enum(["read", "write"]).optional().describe("Use read or write."),
+      },
     },
     async ({ intent, risk }) => ok(discoverCapabilities(intent, risk)),
   );
 
-  server.tool(
+  server.registerTool(
     "ep_capability_schema",
-    "Return full input schema and usage examples for one capabilityId.",
     {
-      capabilityId: z.string().describe("Capability identifier from ep_discover."),
+      ...progressiveToolMetadata.ep_capability_schema,
+      inputSchema: {
+        capabilityId: z.string().describe("Capability identifier from ep_discover."),
+      },
     },
     async ({ capabilityId }) => ok(getCapabilitySchema(capabilityId)),
   );
 
-  server.tool(
+  server.registerTool(
     "ep_execute_read",
-    "Execute approved read-only capabilities.",
     {
-      capabilityId: z.string().describe("Read capability id."),
-      args: z.string().optional().describe("Arguments JSON string for the capability. Use {} for no-args capabilities."),
+      ...progressiveToolMetadata.ep_execute_read,
+      inputSchema: {
+        capabilityId: z.string().describe("Read capability id."),
+        args: z.string().optional().describe("Arguments JSON string for the capability. Use {} for no-args capabilities."),
+      },
     },
     async ({ capabilityId, args }) => ok(await executeReadCapability(ctx, capabilityId, args)),
   );
 
-  server.tool(
+  server.registerTool(
     "ep_execute_write_guarded",
-    "Execute write capability only when approved=true. Otherwise returns blocked response.",
     {
-      capabilityId: z.string().describe("Write capability id."),
-      args: z.string().optional().describe("Arguments JSON string for the capability. Use {} for no-args capabilities."),
-      approved: z.boolean().optional().describe("Set true only after explicit human approval."),
+      ...progressiveToolMetadata.ep_execute_write_guarded,
+      inputSchema: {
+        capabilityId: z.string().describe("Write capability id."),
+        args: z.string().optional().describe("Arguments JSON string for the capability. Use {} for no-args capabilities."),
+        approved: z.boolean().optional().describe("Set true only after explicit human approval."),
+      },
     },
     async ({ capabilityId, args, approved }) => ok(await executeWriteCapability(ctx, capabilityId, args, approved === true)),
   );
